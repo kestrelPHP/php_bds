@@ -20,8 +20,9 @@ class MemberModel extends Model {
     }
 
     public function get($id){
+        $condition = " `enable`=1 AND id=".$id;
         $member = new Member();
-        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE id='".$id."' AND enable=1");
+        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE " . $condition);
 
         if ( $query->num_rows > 0 ){
             $member = $query->row;
@@ -31,7 +32,8 @@ class MemberModel extends Model {
     }
 
     public function delete($id){
-        $result = $this->db->query("DELETE  FROM " . TABLE_MEMBER . " WHERE id='".$id."'");
+        $condition = " id=".$id;
+        $result = $this->db->query("DELETE  FROM " . TABLE_MEMBER . " WHERE " . $condition);
 
         return $result;
     }

@@ -25,10 +25,10 @@ class MemberController extends Controller
                 'enable'            => array('data' => 'Active', 'icon' => 'false', 'element' => 'checkbox','width' => '8%'),
             );
             $filter = array(
-                'Name'    => array('data' => "Nam", 'content' => '', 'field' => 'last_name',
-                    'label'=>'First Name','element' => 'text','class'=>'perc20'),
-//                'Email'    => array('data' => "-1", 'content' => '', 'field' => 'email',
-//                    'label'=>'First Name','element' => 'select','class'=>'perc20'),
+                'LastName'    => array('data' => "", 'content' => '', 'field' => 'last_name',
+                    'label'=>'Last Name','element' => 'text','class'=>'perc20'),
+//                'FirstName'    => array('data' => "", 'content' => '', 'field' => 'first_name',
+//                    'label'=>'First Name','element' => 'text','class'=>'perc20'),
             );
 
             foreach ($request as $key => $value) {
