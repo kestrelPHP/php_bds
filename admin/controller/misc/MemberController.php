@@ -27,6 +27,8 @@ class MemberController extends Controller
             $filter = array(
                 'Name'    => array('data' => "test", 'content' => '',
                     'label'=>'First Name','element' => 'text','class'=>'perc20'),
+                'Email'    => array('data' => "-1", 'content' => '',
+                    'label'=>'First Name','element' => 'select','class'=>'perc20'),
             );
 
             // init values
@@ -34,7 +36,7 @@ class MemberController extends Controller
             $totalItems = $items->num_rows;
             $list = $items->rows;
 
-            $listGender = array(
+            $listType = array(
                 USER_GUST               =>  "-- Select --",
                 USER_SUPER_ADMIN        =>  "Super Admin",
                 USER_ADMIN              =>  "Admin",
@@ -51,13 +53,13 @@ class MemberController extends Controller
                 $value['data'] = isset($request[$key])?$request[$key]:(isset($session[$key])?$session[$key]:$value['data']);
                 switch ( $value['element'] ){
                     case 'select':
-                        $value['content']   = __render($listGender);
-                        $value['data']      = __render($listGender[$value['data']], $value['data']);
+                        $value['content']   = __render($listType);
+                        $value['data']      = __render($value['data'], $listType[$value['data']]);
                         break;
                 }
             }
             foreach ($list as &$item) {
-                $item['type'] = $listGender[$item['type']];
+                $item['type'] = $listType[$item['type']];
             }
 
 
@@ -77,13 +79,53 @@ class MemberController extends Controller
             $data['header']             = $header;
             $data['filter']             = $filter;
             $data['list']               = $list;
-            $data['gender']             = $listGender;
+            $data['gender']             = $listType;
             $data['paging']             = $paging;
 
             return $data;
 
         } catch (Exception $ex){
             throw $ex;
+        }
+    }
+
+    public function edit() {
+        $request = $this->request->request;
+        $loader = $this->load;
+
+        $pid = $request['pid'];
+        $modelUser = $loader->model('Member');
+        $items = $modelUser->get($pid);
+
+        $listType = array(
+            USER_GUST               =>  "-- Select --",
+            USER_SUPER_ADMIN        =>  "Super Admin",
+            USER_ADMIN              =>  "Admin",
+            USER_PARTNER            =>  "Partner",
+            USER_MEMBER             =>  "Member",
+        );
+
+        $statusList = array(
+            USER_STATUS_DEACTIVE    => "Inactive",
+            USER_STATUS_ACTIVE      => "Active",
+        );
+
+        $data['member']         = $items;
+        $data['typeList']       = __render($listType);
+        $data['statusList']     = __render($statusList);
+        return $data;
+    }
+
+    public function delete() {
+        $request = $this->request->request;
+        $loader = $this->load;
+
+        $pid = $request['pid'];
+        $modelUser = $loader->model('Member');
+        $result = $modelUser->delete($pid);
+
+        if ( $result ) {
+            return $this->index();
         }
     }
 }

@@ -105,21 +105,20 @@ function html_render($options, $type, $before = array(), $after = array()){
 	return htmlspecialchars ($str);
 }
 
-function __render($data, $key_value="", $k="key", $v="value"){
-    if ( is_string($data) ) {
-        $obj = new stdClass();
-        $obj->$k = $key_value;
-        $obj->$v = $data;
-        return $obj;
-    }
-    else {
+function __render($value1, $value2="", $k="key", $v="value"){
+    if ( is_array($value1) || is_object($value1) ) {
         $return = array();
-        foreach ( (array)$data as $key => $value ) {
+        foreach ( (array)$value1 as $key => $value ) {
             $obj = new stdClass();
-            $obj->$k        = $key;
-            $obj->$v        = $value;
+            $obj->$k        = strval($key);
+            $obj->$v        = strval($value);
             $return[] = $obj;
         }
         return $return;
+    } else {
+        $obj = new stdClass();
+        $obj->$k = strval($value1);
+        $obj->$v = strval($value2);
+        return $obj;
     }
 }

@@ -1,12 +1,11 @@
 <section id="page" class="view">
     <h1 class="page-header">User Management</h1>
-
     <div class="block pnl-filter">
-        <form class="form-horizontal" novalidate="" name="form" ng-class="">
+        <form class="form-horizontal" novalidate="" name="form_filter" ng-class="">
             <div ng-repeat="th in filter.rows" class="columns {{filter.columns[th].class}}">
                 <div ng-switch="filter.columns[th].element">
                     <label>{{ filter.columns[th].label }}</label>
-                    <input ng-switch-when="text" name="filter[{{th}}]" value="{{filter.columns[th].data}}"
+                    <input ng-switch-when="text" id="filter{{th}}" name="filter[{{th}}]" value="{{filter.columns[th].data}}"
                            type="text"/>
                     <div ng-switch-when="radio">
                         <label ng-repeat="(key, value) in filter.columns[th].content">
@@ -14,7 +13,7 @@
                             {{value}}
                         </label>
                     </div>
-                    <select ng-switch-when="select"
+                    <select ng-switch-when="select" id="filter{{th}}"
                             ng-model="filter.columns[th].data"
                             ng-options="item.value for item in filter.columns[th].content track by item.key">
                     </select>
@@ -26,7 +25,7 @@
             </div>
             </select>
             <div class="perc20 columns pull-right">
-                <a class="button small right pull-right" href="#" ng-click="filter()">
+                <a class="button small right pull-right" href="" ng-click="find()">
                     Filter
                 </a>
             </div>
@@ -34,7 +33,7 @@
     </div>
 
     <label ng-if="header.columns" class="text-right mrgt-3">
-        <a ng-click="edit(0, guide_form)" href="">
+        <a ng-click="edit(0)" href="" data-toggle="modal" data-target="#modelEdit">
             <small>
                 <i class="fa fa-plus fa-1x icon-gray marr3"></i>
                 add new accommodation
@@ -64,7 +63,9 @@
             </td>
         </tr>
         <tr ng-repeat="(id, item) in list"  ng-if="paging.TotalItem > 0">
-            <td ng-repeat="td in header.rows" style="cursor: pointer;" nowrap="nowrap" ng-click="edit(item.pID)">
+            <td style="cursor: pointer;" nowrap="nowrap"
+                ng-repeat="td in header.rows" ng-click="edit(item.id)"
+                data-toggle="modal" data-target="#modelEdit">
                 <span ng-switch="header.columns[td].element">
                     <input ng-switch-when="text" value="{{item[td]}}" type="text"/>
                     <input ng-switch-when="radio" value="{{item[td]}}" type="radio"/>
@@ -73,16 +74,16 @@
                 </span>
             </td>
             <td class="action-func">
-                <a ng-click="load_default_en(item.pID)" href="#" title="Configuration" alt="Configuration">
+                <a ng-click="edit(item.id)" href="" title="Configuration" data-toggle="modal" data-target="#modelEdit">
                     <i class="fa fa-wrench fa-1x"></i>
                 </a>
-                <a href="#" ng-click="delete(item.pid, item.pName)" title="Delete" alt="Delete">
+                <a href="" ng-click="delete(item.id, item.last_name)" title="Delete" data-toggle="modal" data-target="#modelDelete">
                     <i class="fa fa-trash fa-1x"></i>
                 </a>
-                <a href="#" ng-click="view(item.pid)" title="View" alt="View">
+                <a href="" ng-click="view(item.pid)" title="View" alt="View">
                     <i class="fa fa-search fa-1x"></i>
                 </a>
-                <a ng-switch="item.lock" href="#" ng-click="lock(item.pid)">
+                <a ng-switch="item.lock" href="" ng-click="lock(item.pid)">
                     <i ng-switch-when="true" class="fa fa-lock fa-1x"></i>
                     <i ng-switch-when="false" class="fa fa-unlock-alt fa-1x"></i>
                 </a>
@@ -113,3 +114,6 @@
         </div>
     </div>
 </section>
+
+<div ng-include src="'view/modal/user.html'"></div>
+<div ng-include src="'view/modal/delete.html'"></div>

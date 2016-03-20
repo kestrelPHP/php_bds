@@ -6,6 +6,11 @@ define('USER_ADMIN',                    1);
 define('USER_PARTNER',                  2);
 define('USER_MEMBER',                   3);
 
+define('USER_STATUS_DEACTIVE',          0);
+define('USER_STATUS_ACTIVE',            1);
+define('USER_STATUS_BLOCK',             2);
+define('USER_STATUS_LOCK',              3);
+
 
 define('ELEMENT_SELECT',                   1);
 define('ELEMENT_INPUT',                    2);

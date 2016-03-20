@@ -24,6 +24,10 @@ app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode(false).hashPrefix('!');
 }]);
 
+function __render( value1, value2 ) {
+    if ( value2 != isUndefined ) return { key : value1, value: value2};
+    return { key : value1 };
+}
 
 (function (app) {
     function AppConfig() {
@@ -234,10 +238,10 @@ app.factory('apiService', function($http, $resource, $q) {
         },
         get: function( url, pid ) {
             var url = conf.actionPath + url;
-            var resource = $resource(url, {ProviderID: '@id'});
+            var resource = $resource(url, {pid: '@id'});
             var deferred = $q.defer();
             resource.get(
-                { ProviderID: pid },
+                { pid: pid },
                 function( event ) {
                     deferred.resolve(event);
                 },
@@ -259,7 +263,7 @@ app.factory('apiService', function($http, $resource, $q) {
         },
         delete: function( url, pid ){
             var url = conf.actionPath + url;
-            var query = 'ProviderID=' + pid;
+            var query = 'pid=' + pid;
             var promise = $http.post(url, query, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
                 .then(function (response) {
                     return response.data;

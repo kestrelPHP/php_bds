@@ -6,12 +6,11 @@
 app.controller('MemberController',
     function($scope, $rootScope, $route, apiService, $timeout, $location, $compile, $sce) {
         console.log('member controller');
-        var pageNum = 1;
-        var delayTime = 2000; //micro second
-        var calendarType = 1; // 1: standard, 2: date of birth
+
         $scope.fetched = false;
         $scope.saving = false;
-        $scope.resetFilter = false;
+        $scope.searching = false;
+        $scope.reset = false;
 
         var link = {
             list: '/misc/member',
@@ -23,23 +22,17 @@ app.controller('MemberController',
 
         var optionDateEx = {};
         var filterParams = {};
-        var data = {};
 
         $scope.init = function (data) {
-            if(data == isUndefined){
-                data = {list: {}, header: {}, filter: {}, paging: {}, gender: {}, status: {}, sorter: {}, country_code: 'vn'};
+            $scope.link     = link;
+            if ( typeof data != isInvalid ) {
+                $scope.test     = data.test || {};
+                $scope.list     = data.list || {};
+                $scope.header   = data.header || {};
+                $scope.filter   = data.filter || {};
+                $scope.paging   = data.paging || {};
+                $scope.gender   = data.gender || {};
             }
-
-            $scope.test     = data.test || {};
-
-            $scope.link     = link || {};
-
-            $scope.header   = data.header || {};
-            $scope.filter   = data.filter || {};
-            $scope.list     = data.list || {};
-            $scope.paging   = data.paging || {};
-
-            $scope.gender   = data.gender || {};
         };
 
         $scope.sleep = function ($time) {
@@ -60,14 +53,19 @@ app.controller('MemberController',
             }
 
             var params = {};
-            if ( $scope.searching ) {
-                for (var key in filter) {
-                    var value = jQuery('#' + filter[key] ).val();
-                    if ( value != isUndefined ) {
-                        if ( jQuery(filter[key]).parent().hasClass("input-calendar") ) {
-                            value = $scope.revertToString(value);
+            if ( $scope.searching ) {console.log($scope.filter.columns);
+
+                if ( typeof $scope.filter.columns != isInvalid ) {
+                    var filter = $scope.filter.columns;
+                    for (var key in filter) {
+                        var elm = '#filter' + key;
+                        var value = jQuery(elm).val();
+                        if ( value != isUndefined ) {
+                            if ( jQuery(elm).parent().hasClass("input-calendar") ) {
+                                value = $scope.revertToString(value);
+                            }
+                            params[key] = value;
                         }
-                        params[key] = value;
                     }
                 }
             }
@@ -76,6 +74,7 @@ app.controller('MemberController',
                 return apiService.list($scope.link.list, params).then(function (response) {
                     $scope.init(response.data);
                     $scope.fetched = true;
+                    $scope.searching = false;
                     $timeout(function(){
                         $scope.loaded = true;
                     }, 1000);
@@ -83,96 +82,78 @@ app.controller('MemberController',
             }
         };
 
-        $scope.getFilterParams = function () {
-            filterParams = {};
-            if (!$scope.resetFilter) {
-                for (var key in filterIds) {
-                    var value = jQuery(filterIds[key]).val();
-                    if (value != "" && value !== undefined) {
-                        if (jQuery(filterIds[key]).parent().hasClass("input-calendar")) {
-                            value = $scope.revertToString(value);
-                        }
-                        filterParams[key] = value;
-                    }
-                    //jQuery.extend(filterParams, {key: value});
-                }
-            }
-        };
-
         $scope.edit = function(id){
+            $scope.start_edit = true;
             $scope.submitted = false;
-            jQuery('#modalEdit').foundation('reveal', 'open');
+            // jQuery('#modalEdit').foundation('reveal', 'open');
             //$compile(jQuery('#modalEdit').html())($scope);
-            $scope.guide = {};
-            $scope.guide.ID = id;
 
-            apiService.get(id).then(function (response) {
-                var guide = response.data.guide;
-                $scope.guide.Status = {key: guide.GuideStatus};
-                $scope.guide.Gender = {key: guide.Sex};
-                $scope.guide.FirstName = guide.FirstName;
-                $scope.guide.LastName = guide.LastName;
-                $scope.guide.Email = guide.Email;
-                $scope.guide.Phone = guide.Phone;
-                $scope.guide.DOB = guide.DOB;
-                jQuery("#guideDOB").datepicker(optionDateEx).datepicker("setDate", guide.DOB);
+            apiService.get($scope.link.edit, id).then(function (response) {
+                var data = response.data;
+                $scope.member = {};
+                if ( typeof data != isInvalid ) {
 
-                $timeout(function(){
-                    jQuery('#phone').intlTelInput({
-                        defaultCountry: response.data.country_code
-                    });
-                }, 1000);
+                    $scope.typeList = data.typeList;
+                    $scope.statusList = data.statusList;
+
+                    var member = data.member;
+                    $scope.member.pID = id;
+                    $scope.member.Type = __render(member.type);
+                    $scope.member.Active = __render(member.enable);
+                    $scope.member.FirstName = member.first_name;
+                    $scope.member.LastName = member.last_name;
+                    $scope.member.Email = member.email;
+                    $scope.member.UserName = member.login_name;
+                }
             });
         };
+        
+        $scope.save = function(form){
+           if ( $scope.saving ) {
+               return;
+           }
+           $scope.submitted = true;
 
-        //$scope.save = function(form){
-        //    if ( $scope.saving ) {
-        //        return;
-        //    }
-        //    $scope.submitted = true;
-        //
-        //    if(tls.checkPhoneSMS('phone') == 1){
-        //        $scope.phoneInvalid = true;
-        //        var $elm = jQuery('#phone');
-        //        $elm.focus();
-        //        tls.scrollElementToCenter($elm);
-        //        return;
-        //    }else{
-        //        $scope.phoneInvalid = false;
-        //    }
-        //
-        //    if( !form.$invalid ){
-        //        $scope.dataHasSaved();
-        //        $scope.saving = true;
-        //        apiService.save(form).then(function (response) {
-        //            $timeout(function () {
-        //                $scope.saving = false;
-        //                jQuery('#modalEdit').foundation('reveal', 'close');
-        //                $scope.init(response.data);
-        //            }, 1000);
-        //        });
-        //    }else{
-        //        var $elm = jQuery('#modalEdit input.ng-invalid:first');
-        //        $elm.focus();
-        //        tls.scrollElementToCenter($elm);
-        //    }
-        //};
+           if(tls.checkPhoneSMS('phone') == 1){
+               $scope.phoneInvalid = true;
+               var $elm = jQuery('#phone');
+               $elm.focus();
+               tls.scrollElementToCenter($elm);
+               return;
+           }else{
+               $scope.phoneInvalid = false;
+           }
 
-        $scope.deleteItem = function (id, name) {
+           if( !form.$invalid ){
+               $scope.dataHasSaved();
+               $scope.saving = true;
+               apiService.save(form).then(function (response) {
+                   $timeout(function () {
+                       $scope.saving = false;
+                       jQuery('#modalEdit').foundation('reveal', 'close');
+                       $scope.init(response.data);
+                   }, 1000);
+               });
+           }else{
+               var $elm = jQuery('#modalEdit input.ng-invalid:first');
+               $elm.focus();
+               tls.scrollElementToCenter($elm);
+           }
+        };
+
+        $scope.delete = function (id, name) {
             name = name ? name : '';
             $scope.IDDelete = id;
 
             var messageDelete = jQuery('#messageDelete').text();
             jQuery('#modalDelContent').html(messageDelete + ' ' + name + '?');
-            jQuery('#modalDel').foundation('reveal', 'open');
+            //jQuery('#modalDel').foundation('reveal', 'open');
         };
         $scope.submitDel = function (id) {
-            tls.infoMsg(Drupal.t('Deleting ...'));
-            apiService.delete(id).then(function (response) {
-                tls.infoMsg(Drupal.t('Delete data successfully.'));
+
+            apiService.delete($scope.link.delete, id).then(function (response) {
                 $timeout(function () {
-                    tls.clearMsg();
-                    jQuery('#modalDel').foundation('reveal', 'close');
+                    jQuery('#modelDelete').modal('toggle');
                     $scope.init(response.data);
                 }, 1000);
             });
@@ -180,8 +161,8 @@ app.controller('MemberController',
 
         $scope.find = function () {
             $scope.fetched = false;
-            $scope.getFilterParams();
-            $scope.fetchPage(pageNum);
+            $scope.searching = true;
+            $scope.fetchPage();
         };
 
         // Sort on header
@@ -199,11 +180,8 @@ app.controller('MemberController',
         };
 
         //run
-        if( data != isUndefined ){
-            $scope.init(data);
-        }
-
-        $scope.fetchPage(pageNum);
+        $scope.init();
+        $scope.fetchPage();
 
         jQuery('#modalDel, #modalEdit').data('reveal-init', {
             animation: 'fadeAndPop',

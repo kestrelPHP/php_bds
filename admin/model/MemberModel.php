@@ -1,28 +1,34 @@
 <?php
+class Member {
+    public $first_name="";
+    public $last_name="";
+    public $type="-1";
+    public $enable='1';
+    public $login_name="";
+    public $password="";
+}
+
 class MemberModel extends Model {
     public function get_member_list() {
-        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER );
+        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE `enable`=1" );
 
         return $query;
     }
 
-    public function getPage($page_code){
-        if(!empty($page_code)){
-            $query = $this->db->query("SELECT pid, code FROM " . TABLE_PAGE);
+    public function get($id){
+        $member = new Member();
+        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE id='".$id."' AND enable=1");
 
-            foreach ($query->rows as $page) {
-                if($page_code == $page['code']){
-                    return $page['pid'];
-                }
-            }
+        if ( $query->num_rows > 0 ){
+            $member = $query->row;
         }
 
-        return PAGE_ERROR;
+        return $member;
     }
 
-    public function getPageInfo($id) {
-        $query = $this->db->query("SELECT * FROM " . TABLE_PAGE . " WHERE id=`$id`");
+    public function delete($id){
+        $result = $this->db->query("DELETE  FROM " . TABLE_MEMBER . " WHERE id='".$id."'");
 
-        return $query->row;
+        return $result;
     }
 }
