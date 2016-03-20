@@ -11,12 +11,6 @@ $registry->set('load', $loader);
 $config = new Config();
 $registry->set('config', $config);
 
-$config->load('database');
-$config->load('app');
-//$config->load('FilterConfig');
-//$config->load('RouteConfig');
-//$config->load('GlobalConfig');
-
 // Database
 $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
 $registry->set('db', $db);
@@ -88,7 +82,6 @@ $url = new Url($request, $config->get('config_url'), $config->get('config_secure
 $registry->set('url', $url);
 
 // Response
-global $mime_types;
 $response = new Response();
 
 $response->addHeader('Content-Type', 'text/html; charset=utf-8');
@@ -128,32 +121,25 @@ $url->addRewrite($pages);
 
 // Route Detection
 $route = $url->getCurrentRoute();
-global $routes;
-if(in_array($route, array_keys($pages))){
-    $pageCurrent = $pages[$route];
-    $code = $pageCurrent['lang'];
-} else {
-    $code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
-    $pageCurrent = function() use($pages, $code) {
+$routes = $loader->file('routes');
+
+$findPage = function() use ($pages, $route, &$code, $session, $config) {
+    if(in_array($route, array_keys($pages))){
+        $pageCurrent = $pages[$route];
+        $code = $pageCurrent['lang'];
+    } else {
+        $code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
+        $page_id = empty($route) ? PAGE_HOME : PAGE_ERROR;
         foreach ($pages as $page) {
-            if ($page['lang'] == $code && $page['id'] == PAGE_ERROR) {
-                return $page;
+            if ($page['lang'] == $code && $page['id'] == $page_id) {
+                $pageCurrent = $page;
             }
         }
-    };
-//    $pageCurrent = $route;
-//    $code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
-//    foreach ($pages as $page) {
-//        if( $page['lang'] == $code &&  $route == PAGE_HOME ){
-//            $pageCurrent =  $page;
-//            break;
-//        } else if( $page['lang'] == $code && $page['id'] == PAGE_ERROR ){
-//            $pageCurrent =  $page;
-//            break;
-//        }
-//    }
-}
+    }
+    return $pageCurrent;
+};
 
+$pageCurrent = $findPage();
 $route = $routes[$pageCurrent['id']];
 
 // Document

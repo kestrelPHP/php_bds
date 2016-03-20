@@ -9,6 +9,10 @@ if (is_file('config.php')) {
 	require_once('config.php');
 }
 
+// Constant
+if (is_file('constant.php')) {
+	require_once('constant.php');
+}
 // Install
 if (!defined('DIR_ROOT')) {
 	header('Location: install/index.php');

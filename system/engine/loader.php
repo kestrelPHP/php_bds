@@ -171,58 +171,21 @@ final class Loader {
 //        return $tpl->printToScreen();
 //    }
 
-    private function isGlobal($variable){
-        return ( substr($variable, -3) == "__g" || substr($variable, -3) == "g__" );
-    }
-	public function template2($template, $data = array()) {
-		// $this->event->trigger('pre.view.' . str_replace('/', '.', $template), $data);
+	public function file($filename) {
+		$_ = array();
+		$file = DIR_CONFIG . $filename . '.php';
 
-		$file = DIR_TEMPLATE . $template;
-
-		if (file_exists($file)) {
-			$tpl = new TemplatePower($file);
-			$tpl->prepare();
-			if(count($data)){
-                if(isset($data['block'])){
-                    foreach ($data['block'] as $item) {
-                        if(is_object($item)){
-                            $item = (array)$item;
-                            if(count($item)){
-                                foreach ($item as $key => $value) {
-                                    if(is_object($value)){
-                                        $item2 = (array)$value;
-                                        foreach ($item2 as $key2 => $value2) {
-                                            if($key2 == "__b") $tpl->newBlock($value2);
-                                            if($this->isGlobal($key2)) $tpl->assignGlobal(substr($key2, 0, -3), $value2);
-                                            else  $tpl->assign($key2, $value2);
-                                        }
-                                    }
-                                    if($key == "__b") $tpl->newBlock($value);
-                                    if($this->isGlobal($key)) $tpl->assignGlobal(substr($key, 0, -3), $value);
-                                    else  $tpl->assign($key, $value);
-                                }
-                            }
-                        }
-                    }
-                    unset($data['block']);
-                }
-
-                foreach ($data as $key => $value) {
-                    $tpl->gotoBlock( "_ROOT" );
-                    if($this->isGlobal($key)) $tpl->assignGlobal($key, $value);
-                    else $tpl->assign($key, $value);
-                }
-            }
-		} else {
-			trigger_error('Error: Could not load template ' . $file . '!');
-			exit();
+		if (!file_exists($file)) {
+			$file = DIR_APP_CONFIG . $filename . '.php';
 		}
 
-		// $this->event->trigger('post.view.' . str_replace('/', '.', $template), $output);
-
-		return $tpl->printToScreen();
+		if (file_exists($file)) {
+			$_ = require($file);
+		}
+		
+		return $_;
 	}
-
+	
 	public function helper($helper) {
 		$file = DIR_SYSTEM . 'helper/' . str_replace('../', '', (string)$helper) . '.php';
 

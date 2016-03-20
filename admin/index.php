@@ -11,6 +11,11 @@ if (is_file('../config.php')) {
     require_once('../config.php');
 }
 
+// Constant
+if (is_file('../constant.php')) {
+    require_once('../constant.php');
+}
+
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
 
@@ -25,12 +30,6 @@ $registry->set('load', $loader);
 // Config
 $config = new Config();
 $registry->set('config', $config);
-
-$config->load('database');
-//$config->load('AppConfig');
-//$config->load('FilterConfig');
-//$config->load('RouteConfig');
-//$config->load('GlobalConfig');
 
 // Database
 $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
@@ -102,7 +101,6 @@ $api = new Api($request, $config->get('config_url'), $config->get('config_secure
 $registry->set('url', $api);
 
 // Response
-global $mime_types;
 $response = new Response();
 $response->addHeader('Content-Type', 'text/html; charset=utf-8');
 //$response->setCompression($config->get('config_compression'));

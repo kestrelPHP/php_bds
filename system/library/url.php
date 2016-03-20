@@ -57,7 +57,7 @@ class Url {
 
         // Break apart the route
         while ($parts) {
-            if( $parts[0] == trim(APP_NAME, "/") || strtolower($parts[0]) == "admin" ) unset($parts[0]);
+            if( $parts[0] == trim(APP_NAME, "/") ) unset($parts[0]);
 
             $this->args[] = array_pop($parts);
         }
@@ -88,7 +88,7 @@ class Url {
 
     public function getCurrentRoute(){
 
-        return $this->route=="" ? "dashboard" : strtolower($this->route);
+        return trim(strtolower($this->route), '/');
     }
     public function getParam(){
 
