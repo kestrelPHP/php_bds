@@ -9,8 +9,12 @@ class Member {
 }
 
 class MemberModel extends Model {
-    public function get_member_list() {
-        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE `enable`=1" );
+    public function get_list($params=array()) {
+        $condition = " 1=1 AND `enable`=1 ";
+        foreach ((array)$params as $key => $value) {
+            $condition .= " AND " . $key . " = " . "'$value'";
+        }
+        $query = $this->db->query("SELECT * FROM " . TABLE_MEMBER . " WHERE " . $condition);
 
         return $query;
     }

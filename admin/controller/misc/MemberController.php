@@ -13,7 +13,7 @@ class MemberController extends Controller
         try{
             $request = $this->request->request;
             $session = $this->session->data;
-            $data = $paging = $sidebar = $filter = $test = $list = array();
+            $data = $paging = $sidebar = $filter = $test = $list = $params = array();
             $listGender = array();
 
             // init display
@@ -25,14 +25,22 @@ class MemberController extends Controller
                 'enable'            => array('data' => 'Active', 'icon' => 'false', 'element' => 'checkbox','width' => '8%'),
             );
             $filter = array(
-                'Name'    => array('data' => "test", 'content' => '',
+                'Name'    => array('data' => "Nam", 'content' => '', 'field' => 'last_name',
                     'label'=>'First Name','element' => 'text','class'=>'perc20'),
-                'Email'    => array('data' => "-1", 'content' => '',
-                    'label'=>'First Name','element' => 'select','class'=>'perc20'),
+//                'Email'    => array('data' => "-1", 'content' => '', 'field' => 'email',
+//                    'label'=>'First Name','element' => 'select','class'=>'perc20'),
             );
 
+            foreach ($request as $key => $value) {
+                if ( isset($filter[$key]) ) {
+                    $params[$filter[$key]['field']] = $value;
+                }
+
+            }
+
             // init values
-            $items = $this->load->model('Member', 'get_member_list');
+            $modelMember = $this->load->model('Member');
+            $items = $modelMember->get_list($params);
             $totalItems = $items->num_rows;
             $list = $items->rows;
 
@@ -74,7 +82,6 @@ class MemberController extends Controller
             // rebuild session
 //            $_SESSION['page_guide_'.$operatorId]['paging'] = $paging;
 
-            // render to js
             $data['test']               = $test;
             $data['header']             = $header;
             $data['filter']             = $filter;

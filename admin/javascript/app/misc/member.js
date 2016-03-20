@@ -53,14 +53,13 @@ app.controller('MemberController',
             }
 
             var params = {};
-            if ( $scope.searching ) {console.log($scope.filter.columns);
-
+            if ( $scope.searching ) {
                 if ( typeof $scope.filter.columns != isInvalid ) {
                     var filter = $scope.filter.columns;
                     for (var key in filter) {
                         var elm = '#filter' + key;
                         var value = jQuery(elm).val();
-                        if ( value != isUndefined ) {
+                        if ( value != isUndefined && value != isEmpty) {
                             if ( jQuery(elm).parent().hasClass("input-calendar") ) {
                                 value = $scope.revertToString(value);
                             }
@@ -150,7 +149,6 @@ app.controller('MemberController',
             //jQuery('#modalDel').foundation('reveal', 'open');
         };
         $scope.submitDel = function (id) {
-
             apiService.delete($scope.link.delete, id).then(function (response) {
                 $timeout(function () {
                     jQuery('#modelDelete').modal('toggle');
