@@ -32,9 +32,9 @@ app.config(['$locationProvider', function ($locationProvider) {
 
     var self = AppConfig;
 
-    self.actionPath = "http://demo.local/admin/";
-    self.templatePath = "view/";
     self.testMode = false;
+    self.actionPath = "/admin/";
+    self.templatePath = "view/";
     self.uploadPath = "../uploads/";
 
     app.conf = AppConfig;
