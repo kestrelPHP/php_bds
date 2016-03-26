@@ -11,6 +11,7 @@ app.controller('MemberController',
         $scope.saving = false;
         $scope.searching = false;
         $scope.reset = false;
+        $scope.start_edit = false;
 
         var link = {
             list: '/misc/member',
@@ -23,6 +24,9 @@ app.controller('MemberController',
         var optionDateEx = {};
         var filterParams = {};
 
+        // init Tinymce
+        $scope.tiny_options = $tinymceOptions.tiny;
+        
         $scope.init = function (data) {
             $scope.link     = link;
             if ( typeof data != isInvalid ) {
@@ -96,13 +100,15 @@ app.controller('MemberController',
                     $scope.statusList = data.statusList;
 
                     var member = data.member;
-                    $scope.member.pID = id;
+                    $scope.member.ID = id;
                     $scope.member.Type = __render(member.type);
                     $scope.member.Active = __render(member.enable);
                     $scope.member.FirstName = member.first_name;
                     $scope.member.LastName = member.last_name;
                     $scope.member.Email = member.email;
                     $scope.member.UserName = member.login_name;
+
+                    tinyMCE.execCommand("mceAddControl", false, 'correspondence_content');
                 }
             });
         };
@@ -113,30 +119,31 @@ app.controller('MemberController',
            }
            $scope.submitted = true;
 
-           if(tls.checkPhoneSMS('phone') == 1){
-               $scope.phoneInvalid = true;
-               var $elm = jQuery('#phone');
-               $elm.focus();
-               tls.scrollElementToCenter($elm);
-               return;
-           }else{
-               $scope.phoneInvalid = false;
-           }
+           // if(tls.checkPhoneSMS('phone') == 1){
+           //     $scope.phoneInvalid = true;
+           //     var $elm = jQuery('#phone');
+           //     $elm.focus();
+           //     tls.scrollElementToCenter($elm);
+           //     return;
+           // }else{
+           //     $scope.phoneInvalid = false;
+           // }
 
            if( !form.$invalid ){
                $scope.dataHasSaved();
                $scope.saving = true;
-               apiService.save(form).then(function (response) {
+               apiService.save($scope.link.save, form).then(function (response) {
                    $timeout(function () {
                        $scope.saving = false;
-                       jQuery('#modalEdit').foundation('reveal', 'close');
+                       jQuery('#modelEdit').modal('toggle');
+                       //jQuery('#modalEdit').foundation('reveal', 'close');
                        $scope.init(response.data);
                    }, 1000);
                });
            }else{
                var $elm = jQuery('#modalEdit input.ng-invalid:first');
                $elm.focus();
-               tls.scrollElementToCenter($elm);
+               app.scrollElementToCenter($elm);
            }
         };
 
@@ -177,7 +184,35 @@ app.controller('MemberController',
             }
         };
 
+        $scope.sortList = function(list) {
+            list.sort(function(a, b) {
+                return (a.sort - b.sort);
+            });
+        };
+
+        $scope.getLang = function(content, show) {
+            try {
+                var obj = JSON.parse(content);
+                if (typeof obj == 'object')
+                {
+                    if (show == true)
+                        return obj['en'];
+                    else
+                    if (typeof obj[$scope.languageCur] !== 'undefined')
+                        return obj[$scope.languageCur];
+                    else
+                        return '';
+                }
+            } catch (e) {
+                if (show == true)
+                    return content;
+                else
+                    return '';
+            }
+        };
+
         //run
+        if( $scope.tiny_options !== isInvalid ) tinyMCE.init($scope.tiny_options);
         $scope.init();
         $scope.fetchPage();
 
@@ -217,21 +252,12 @@ app.controller('MemberController',
             return ($scope[form][elementName].$dirty
             && $scope[form].$error.required && $scope.submitted);
         };
-        $scope.ngErrorRequired = function(form, elementName) {
-            return ($scope[form][elementName].$error.required && $scope.submitted);
+        $scope.ngErrorRequired = function(form, elementName) {return false;
+            //return ($scope[form][elementName].$error.required && $scope.submitted);
         };
-        $scope.start_edit_options = false;
-        jQuery('#modalEdit').bind('close', function() {
-            $timeout(function() {
-                $scope.start_edit_options = false;
-            }, 100);
 
-            $scope.start_edit_partner = false;
-        });
-        jQuery('#modalEdit').bind('open', function() {
-            $scope.start_edit_options = true;
-
-        });
+        jQuery('#modalEdit').on('hidden.bs.modal', function() { $timeout(function() { $scope.start_edit = false; }, 500); });
+        jQuery('#modalEdit').on('show.bs.modal', function() { $scope.start_edit = true; });
 
         //Begin Calendar]
         $scope.showCalendar = function () {

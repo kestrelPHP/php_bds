@@ -4,11 +4,115 @@
     <div class="content-side">
         <h6 class="mrgt15">Settings</h6>
         <form action="" method="post" name="settings_form" id="" novalidate>
-            <div class="columns large-6">
-
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Website Name</label>
+                            <input type="text" class="form-control" id="SiteName"
+                                   ng-model="setting.SiteName" name="setting[SiteName]">
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Logo</label>
+                            <div class="col-xs-8">
+                                <div class="row">
+                                    <input type="file" id="uxLogo" fileupload="fileupload_options" data-type="logo" tabindex="-1">
+                                    <input type="text">
+                                    <a href="#" id="uxLogoDelete" class="input-text-delete" title="Delete">X</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="row">
+                                    <!--<a href="#" class="button postfix error-nobdrl" id="uxLogoButton" ng-class="{'alert-border': ngErrorRequired('hotel_inf[image_items][logo]')}" tabindex="-1"> Choose File </a>-->
+                                    <a href="#" class="button postfix error-nobdrl" id="uxLogoButton" ng-class="" tabindex="-1"> Choose File </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Logo Mobile</label>
+                            <div class="col-xs-8">
+                                <div class="row">
+                                    <input type="file" id="uxLogoMobile" fileupload="fileupload_options" data-type="logo" tabindex="-1"">
+                                    <input type="text">
+                                    <a href="#" id="uxLogoMobileDelete" class="input-text-delete" title="Delete">X</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="row">
+                                    <!--<a href="#" class="button postfix error-nobdrl" id="uxLogoButton" ng-class="{'alert-border': ngErrorRequired('hotel_inf[image_items][logo]')}" tabindex="-1"> Choose File </a>-->
+                                    <a href="#" class="button postfix error-nobdrl" id="uxLogoMobileButton" ng-class="" tabindex="-1"> Choose File </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Logo Mobile</label>
+                            <div class="col-xs-8">
+                                <div class="row">
+                                    <input type="file" id="uxFavicon" fileupload="fileupload_options" data-type="favicon" tabindex="-1">
+                                    <input type="text">
+                                    <a href="#" id="uxFaviconDelete" class="input-text-delete" title="Delete">X</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="row">
+                                    <!--<a href="#" class="button postfix error-nobdrl" id="uxLogoButton" ng-class="{'alert-border': ngErrorRequired('hotel_inf[image_items][logo]')}" tabindex="-1"> Choose File </a>-->
+                                    <a href="#" class="button postfix error-nobdrl" id="uxFaviconButton" ng-class="" tabindex="-1"> Choose File </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <label>Website Footer</label>
+                            <textarea id="wsFooter" tinymce="tiny_options"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="columns large-6">
-
+            <div class="col-xs-6">
+                <div class="row-fluid">
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Font</label>
+                            <input type="text" class="form-control" id="Font"
+                                   ng-model="setting.Font" name="setting[Font]">
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Font</label>
+                            <input type="text" class="form-control" id="Font"
+                                   ng-model="setting.Font" name="setting[Font]">
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Font</label>
+                            <input type="text" class="form-control" id="Font"
+                                   ng-model="setting.Font" name="setting[Font]">
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Font</label>
+                            <input type="text" class="form-control" id="Font"
+                                   ng-model="setting.Font" name="setting[Font]">
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row">
+                            <label>Font</label>
+                            <input type="text" class="form-control" id="Font"
+                                   ng-model="setting.Font" name="setting[Font]">
+                        </div>
+                    </div>
+                </div>
             </div>
             <input type="hidden" name="hotel_inf[manual_custom_css]" value="0">
             <input type="hidden" name="form_build_id" value="form-ORsbpSUgS35YmeAcw1vmRFahkHUhkXZouZI_SxVq0ww">
@@ -16,10 +120,10 @@
             <input type="hidden" name="form_id" value="development_settings_form">
         </form>
 
-        <!--<a class="button small" href="#"-->
-            <!--ng-loading-button="saving_settings"-->
-            <!--completed-message="Saved!"-->
-            <!--ng-click="save(settings, settings_form)">Save</a>-->
-        <!-- <span><img src="/sites/all/themes/manage/img/ajax-loader.gif" /></span> -->
+        <a class="button small" href="#"
+            ng-loading-button="saving_settings"
+            completed-message="Saved!"
+            ng-click="save(settings, settings_form)">Save</a>
+         <span><img class="image-responsive" src="static/image/site/ajax-loader.gif" /></span>
     </div>
 </div>

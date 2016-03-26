@@ -16,18 +16,23 @@
 
     <link href="javascript/library/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="static/css/flag-icon.css" rel="stylesheet" type="text/css"/>
+    <link href="static/css/ui.css" rel="stylesheet" type="text/css"/>
     <link href="static/css/reset.css" rel="stylesheet" type="text/css"/>
     <link href="static/css/style.css" rel="stylesheet" type="text/css"/>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>
+    <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" type="text/javascript"></script>-->
+    <!--<script src='//cdn.tinymce.com/4/tinymce.min.js'></script>-->
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-route.min.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-resource.min.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-animate.min.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-touch.min.js'></script>
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-cookies.min.js'></script>
+
     <script src='javascript/library/modernizr.custom-2.6.2.min.js'></script>
+    <script src='javascript/library/tinymce/v3/tiny_mce_dev.js'></script>
+    <script src='javascript/library/bootstrap/js/bootstrap.min.js'></script>
 
 </head>
 
@@ -146,13 +151,30 @@
 
 
 <!--SCRIPTS START-->
+<script type="text/javascript">
+//    tinymce.init({
+//        selector: '#myTextarea',
+//        theme: 'modern',
+//        width: 600,
+//        height: 300,
+//        plugins: [
+//            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+//            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+//            'save table contextmenu directionality emoticons template paste textcolor'
+//        ],
+//        content_css: 'css/content.css',
+//        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
+//    });
+</script>
 <!--<script src="javascript/app/plugin.js"></script>-->
 <script src="javascript/app/menu.js"></script>
 <script src="javascript/app/redirect.js"></script>
 
+
 <!--<script src="javascript/app/general.js"></script>-->
 
-<script src="javascript/app/app.manage.js"></script>
+<script src="javascript/app/app.js"></script>
+<script src="javascript/app/directive.js"></script>
 <script src="javascript/app/dashboard.js"></script>
 
 <script src="javascript/app/website/page.js"></script>

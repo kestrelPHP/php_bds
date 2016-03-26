@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Database\Capsule\Manager as Capsule;
 /**
  * Created by PhpStorm.
  * User: Nam Dinh
@@ -39,10 +39,11 @@ class MemberController extends Controller
             }
 
             // init values
-            $modelMember = $this->load->model('Member');
-            $items = $modelMember->get_list($params);
-            $totalItems = $items->num_rows;
-            $list = $items->rows;
+            $model = $this->load->eloquent("Member");
+            $member = $model::_filter($params);
+            $list = $member;
+            $totalItems = $member->count();
+            
 
             $listType = array(
                 USER_GUST               =>  "-- Select --",
@@ -79,9 +80,6 @@ class MemberController extends Controller
             $paging['PageNext'] = $paging['PageNum'] + 1;
             $paging['PagePrev'] = $paging['PageNum'] - 1;
 
-            // rebuild session
-//            $_SESSION['page_guide_'.$operatorId]['paging'] = $paging;
-
             $data['test']               = $test;
             $data['header']             = $header;
             $data['filter']             = $filter;
@@ -101,8 +99,12 @@ class MemberController extends Controller
         $loader = $this->load;
 
         $pid = $request['pid'];
-        $modelUser = $loader->model('Member');
-        $items = $modelUser->get($pid);
+        $modelMember =$loader->eloquent("Member");
+        if( $pid > 0) {
+            $items = $modelMember::find($pid);
+        } else {
+            $items = $modelMember::_make();
+        }
 
         $listType = array(
             USER_GUST               =>  "-- Select --",
@@ -120,7 +122,37 @@ class MemberController extends Controller
         $data['member']         = $items;
         $data['typeList']       = __render($listType);
         $data['statusList']     = __render($statusList);
+
         return $data;
+    }
+
+    public function save() {
+        $loader = $this->load;
+        $post = $this->request->post['member'];
+
+        $data['first_name'] = $post['FirstName'];
+        $data['last_name'] = $post['LastName'];
+        $data['email'] = $post['Email'];
+        $data['type'] = $post['Type'];
+        $data['enable'] = $post['Active'];
+        $data['login_name'] = $post['UserName'];
+        if( !empty($post['Password']) ) {
+            $data['password'] = $post['Password'];
+        }
+
+        $model = $loader->eloquent("Member");
+        $data = $model::_save($data, $post['ID']);
+//        if ( $post['ID'] > 0) {
+//            $member = $post['ID'];
+//            $member = $model::_make();
+//        } else {
+//            unset($post['ID']);
+//            $member = $model::create($data);
+//        }
+//
+//        $member->save();
+return $data;
+        //return $this->index();
     }
 
     public function delete() {
@@ -128,11 +160,9 @@ class MemberController extends Controller
         $loader = $this->load;
 
         $pid = $request['pid'];
-        $modelUser = $loader->model('Member');
-        $result = $modelUser->delete($pid);
+        $model = $loader->eloquent('Member');
+        $model::find($pid)->delete();
 
-        if ( $result ) {
-            return $this->index();
-        }
+        return $this->index();
     }
 }

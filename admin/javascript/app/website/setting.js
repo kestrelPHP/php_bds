@@ -16,6 +16,9 @@ app.controller('SettingController',
         var calendar = ['#guideDOB'];
         var filter = {param_1:'filterName'};
 
+        // init Tinymce
+        $scope.tiny_options = $tinymceOptions.tiny;
+        
         $scope.init = function (data) {
             if ( typeof data != isInvalid ) {
                 $scope.sidebar = data.sidebar || {};
@@ -155,8 +158,10 @@ app.controller('SettingController',
         };
 
         //run
+        if( $scope.tiny_options !== isInvalid ) tinyMCE.init($scope.tiny_options);
         $scope.init();
         $scope.fetchPage();
+        
 
         jQuery('#modalDel, #modalEdit').data('reveal-init', {
             animation: 'fadeAndPop',

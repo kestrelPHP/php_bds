@@ -110,15 +110,15 @@ function __render($value1, $value2="", $k="key", $v="value"){
         $return = array();
         foreach ( (array)$value1 as $key => $value ) {
             $obj = new stdClass();
-            $obj->$k        = strval($key);
-            $obj->$v        = strval($value);
+            $obj->$k        = ($key);
+            $obj->$v        = ($value);
             $return[] = $obj;
         }
         return $return;
     } else {
         $obj = new stdClass();
-        $obj->$k = strval($value1);
-        $obj->$v = strval($value2);
+        $obj->$k = ($value1);
+        $obj->$v = ($value2);
         return $obj;
     }
 }

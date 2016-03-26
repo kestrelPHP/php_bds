@@ -40,7 +40,8 @@ $config->set('config_url', HTTP_SERVER);
 $config->set('config_ssl', HTTPS_SERVER);
 
 // Settings
-$settings = $loader->model('Setting', "getSetting");
+$modelSetting = $loader->eloquent('Setting');
+$settings = $modelSetting::all();
 foreach ($settings as $result) {
     if (!$result['serialized']) {
         $config->set($result['key'], $result['value']);

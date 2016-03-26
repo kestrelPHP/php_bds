@@ -1,11 +1,11 @@
-<div id="modelEdit" class="modal fade" role="dialog">
+<div ng-if="start_edit" id="modelEdit" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" ng-if="member.pID == 0">Add Member</h4>
-                <h4 class="modal-title" ng-if="member.pID > 0">Edit Member</h4>
+                <h4 class="modal-title" ng-if="member.ID == 0">Add Member</h4>
+                <h4 class="modal-title" ng-if="member.ID > 0">Edit Member</h4>
             </div>
             <div class="modal-body">
                 <form id="formEdit" name="formEdit" novalidate method="post">
@@ -14,12 +14,14 @@
                             <div class="form-group">
                                 <label for="FirstName">First Name:</label>
                                 <input type="text" class="form-control" id="FirstName"
-                                       ng-model="member.FirstName" name="member[FirstName]">
+                                       ng-model="member.FirstName" name="member[FirstName]"
+                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[FirstName]')}" required>
                             </div>
                             <div class="form-group">
                                 <label for="UserName">Login Name:</label>
                                 <input type="text" class="form-control" id="UserName"
-                                       ng-model="member.UserName" name="member[UserName]">
+                                       ng-model="member.UserName" name="member[UserName]"
+                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[UserName]')}" required>
                             </div>
                             <div class="form-group">
                                 <label for="Password">Password:</label>
@@ -48,25 +50,34 @@
                             <div class="form-group">
                                 <label for="LastName">Last Name:</label>
                                 <input type="text" class="form-control" id="LastName"
-                                       ng-model="member.LastName" name="member[LastName]">
+                                       ng-model="member.LastName" name="member[LastName]"
+                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[LastName]')}" required>
                             </div>
                             <div class="form-group">
                                 <label for="Email">Email:</label>
                                 <input type="text" class="form-control" id="Email"
-                                       ng-model="member.Email" name="member[Email]">
+                                       ng-model="member.Email" name="member[Email]"
+                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[Email]')}" required>
                             </div>
                             <div class="form-group">
                                 <label for="Confirm">Re-type Password:</label>
                                 <input type="text" class="form-control" id="Confirm"
                                        ng-model="member.Confirm" name="member[Confirm]">
                             </div>
+                            <div class="form-group">
+                                <label for="description">Description:</label>
+                                <textarea style="min-height: 82px;" class="form-control" id="description"
+                                          ng-model="member.Confirm" name="member[Confirm]"></textarea>
+                            </div>
+
                         </div>
                     </div>
+                    <input type="hidden" id="ID" name="member[ID]" value="{{member.ID}}">
                 </form>
                 <div class="clearfix"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="button tiny" ng-click="save(modelUser)">Save</button>
+                <button type="button" class="button tiny" ng-click="save(formEdit)">Save</button>
             </div>
         </div>
 

@@ -42,51 +42,50 @@ TopMenu.initEvent = function() {
     $subnav.unbind();
     $sub_item.unbind();
 
-    if ( $preview_link.length ) {
-        $preview_link.unbind();
-        $preview_link.click(function(evt) {
-            evt.preventDefault();
-            var link = jQuery('#hotel_staging_domain').val();
-            if ( link ) {
-                link = jQuery('#select_hotel').val() + link;
-                window.open('http://' + link);
-            }
-        });
-    }
+    // if ( $preview_link.length ) {
+    //     $preview_link.unbind();
+    //     $preview_link.click(function(evt) {
+    //         evt.preventDefault();
+    //         var link = jQuery('#hotel_staging_domain').val();
+    //         if ( link ) {
+    //             link = jQuery('#select_hotel').val() + link;
+    //             window.open('http://' + link);
+    //         }
+    //     });
+    // }
 
-    if ( $preview_mobile_link.length ) {
-        $preview_mobile_link.unbind();
-        $preview_mobile_link.click(function(evt,$sce) {
-            evt.preventDefault();
-            var link = jQuery('#hotel_staging_domain').val();
-            if ( link ) {
-                //link = jQuery('#select_hotel').val() + link;
-                //var preview_link   = '/console/website/preview?link=' + 'http://'+ link + '&demo=true&time=' + (new Date()).getTime();
-                //preview_link   = $sce.trustAsResourceUrl(preview_link);
-                jQuery('#preview-mobile-website').foundation('reveal', 'open');
-                //jQuery("#preview-general").attr("src", preview_link);
-                //document.getElementById('preview-general').contentWindow.location.reload();
-            }
-        });
-    }
+    // if ( $preview_mobile_link.length ) {
+    //     $preview_mobile_link.unbind();
+    //     $preview_mobile_link.click(function(evt,$sce) {
+    //         evt.preventDefault();
+    //         var link = jQuery('#hotel_staging_domain').val();
+    //         if ( link ) {
+    //             //link = jQuery('#select_hotel').val() + link;
+    //             //var preview_link   = '/console/website/preview?link=' + 'http://'+ link + '&demo=true&time=' + (new Date()).getTime();
+    //             //preview_link   = $sce.trustAsResourceUrl(preview_link);
+    //             jQuery('#preview-mobile-website').foundation('reveal', 'open');
+    //             //jQuery("#preview-general").attr("src", preview_link);
+    //             //document.getElementById('preview-general').contentWindow.location.reload();
+    //         }
+    //     });
+    // }
 
-    jQuery('#preview-mobile-website').bind('open', function() {
-        var link = jQuery('#hotel_staging_domain').val();
-        if ( link ) {
-            link = jQuery('#select_hotel').val() + link;
-            var preview_link   = '/console/website/preview?link=' + 'http://'+ link + '&demo=true&time=' + (new Date()).getTime();
-            jQuery("#preview-general").attr("src", preview_link);
-        }
-    });
+    // jQuery('#preview-mobile-website').bind('open', function() {
+    //     var link = jQuery('#hotel_staging_domain').val();
+    //     if ( link ) {
+    //         link = jQuery('#select_hotel').val() + link;
+    //         var preview_link   = '/console/website/preview?link=' + 'http://'+ link + '&demo=true&time=' + (new Date()).getTime();
+    //         jQuery("#preview-general").attr("src", preview_link);
+    //     }
+    // });
 
-    jQuery('#preview-mobile-website').bind('close', function() {
-        //jQuery("#preview-general").attr("src", "");
-    });
+    // jQuery('#preview-mobile-website').bind('close', function() {
+    //     jQuery("#preview-general").attr("src", "");
+    // });
 
-    jQuery('#close-preview-mobile-website').click(function(evt) {
-        //jQuery("#preview-general").attr("src", "");
-        jQuery('#preview-mobile-website').foundation('reveal', 'close');
-    });
+    // jQuery('#close-preview-mobile-website').click(function(evt) {
+    //     jQuery('#preview-mobile-website').foundation('reveal', 'close');
+    // });
 
     var is_touch = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
 

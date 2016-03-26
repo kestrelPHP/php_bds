@@ -115,6 +115,22 @@ final class Loader {
 
 		// $this->event->trigger('post.model.' . str_replace('/', '.', (string)$model), $output);
 	}
+	
+	public function eloquent($model) {
+		$file = DIR_APP . 'model/' . ucfirst($model) . 'Model' . '.php';
+		$class = preg_replace('/[^a-zA-Z0-9]/', '', ucfirst($model)) . 'Model';
+
+		if (file_exists($file)) {
+			include_once($file);
+
+			return $class;
+		} else {
+			trigger_error('Error: Could not load model ' . $file . '!');
+			exit();
+		}
+
+		// $this->event->trigger('post.model.' . str_replace('/', '.', (string)$model), $output);
+	}
 
 	public function view($template, $data = array()) {
 		//$file = DIR_TEMPLATE . $template;

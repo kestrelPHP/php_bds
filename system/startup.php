@@ -127,3 +127,30 @@ require_once(modification(DIR_SYSTEM . 'engine/registry.php'));
 require_once(DIR_SYSTEM . 'helper/general.php');
 require_once(DIR_SYSTEM . 'helper/json.php');
 require_once(DIR_SYSTEM . 'helper/utf8.php');
+
+//$conf = array();
+//tlslib\Tls::getServiceLocator()->setService('ApplicationConfig', $conf);
+//tlslib\Tls::getServiceLocator()->setService('Config', $conf);
+
+
+
+/**
+ * Configure the database and boot Eloquent
+ */
+use Illuminate\Database\Capsule\Manager as Capsule;
+$capsule = new Capsule;
+$capsule->addConnection([
+    'driver'    => "mysql",
+    'host'      => DB_HOSTNAME,
+    'database'  => DB_DATABASE,
+    'username'  => DB_USERNAME,
+    'password'  => DB_PASSWORD,
+	'prefix'    => DB_PREFIX,
+    'charset'   => 'utf8',
+    'collation' => 'utf8_general_ci'
+]);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+
+// set timezone for timestamps etc
+date_default_timezone_set('UTC');
