@@ -18,7 +18,7 @@ if (!defined('DIR_ROOT')) {
 	header('Location: install/index.php');
 	exit;
 }
-echo "zzzz";
+
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
 
