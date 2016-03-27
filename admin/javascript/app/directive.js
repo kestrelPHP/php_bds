@@ -225,7 +225,7 @@ app.directive('minicolors', ['$timeout', function($timeout) {
 app.directive('defaultcolor', ['$timeout', function() {
     return function(scope, element, attrs) {
         element.click(function() {
-            var id = element.attr('data-orign');
+            var id = element.attr('data-origin');
             if ( id ) {
                 var $color = jQuery('#' + id);
                 $color.minicolors('value', attrs.defaultcolor);
