@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('DashboardController',
+app.controller('MemberController',
     function($scope, $rootScope, $route, apiService, $timeout, $location, $compile, $sce) {
         console.log('member controller');
 
@@ -11,10 +11,10 @@ app.controller('DashboardController',
         $scope.start_edit = false;
 
         var link = {
-            list: '/dashboard',
-            edit: '',
-            save: '',
-            delete: ''
+            list: '/misc/member',
+            edit: '/misc/member@edit',
+            save: '/misc/member@save',
+            delete: '/misc/member@delete'
         };
 
         // init Tinymce
