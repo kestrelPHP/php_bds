@@ -1,19 +1,16 @@
 <?php
 
-// Registry
+// init class
 $registry = new Registry();
-
-// Loader
 $loader = new Loader($registry);
-$registry->set('load', $loader);
-
-// Config
 $config = new Config();
-$registry->set('config', $config);
+$request = new Request();
+$response = new Response();
+$cache = new Cache('file');
+$session = new Session();
+$document = new Document();
 
-// Database
 $db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
-$registry->set('db', $db);
 
 // Domain
 $config->set('config_url', HTTP_SERVER);
@@ -21,7 +18,8 @@ $config->set('config_ssl', HTTPS_SERVER);
 
 
 // Settings
-$settings = $loader->model('Setting', 'getSetting');
+$mSetting = $loader->eloquent('Setting');
+$settings = $mSetting::all();
 foreach ($settings as $result) {
     if (!$result['serialized']) {
         $config->set($result['key'], $result['value']);
@@ -29,10 +27,9 @@ foreach ($settings as $result) {
         $config->set($result['key'], json_decode($result['value'], true));
     }
 }
+
 // Log
 $log = new Log($config->get('config_error_filename'));
-$registry->set('log', $log);
-
 function error_handler($code, $message, $file, $line) {
     global $log, $config;
 
@@ -69,89 +66,60 @@ function error_handler($code, $message, $file, $line) {
 
     return true;
 }
-
-// Error Handler
 set_error_handler('error_handler');
 
-// Request
-$request = new Request();
-$registry->set('request', $request);
-
-// Url
-$url = new Url($request, $config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));
-$registry->set('url', $url);
-
-// Response
-$response = new Response();
-
-$response->addHeader('Content-Type', 'text/html; charset=utf-8');
-$response->setCompression($config->get('config_compression'));
-$registry->set('response', $response);
-
-// Cache
-$cache = new Cache('file');
-$registry->set('cache', $cache);
-
-// Session
-$session = new Session();
-$registry->set('session', $session);
-
-// Language Detection
+// Languages
 $languages = array();
-$langList = $loader->model('Language', 'fetchAll');
+$mLanguage = $loader->eloquent("Language");
+$langList = $mLanguage::where('enable', '=', '1')->get();
 
+// Pages
 $pages = array();
-$pageList = $loader->model('Page', 'fetchAll');
+$mPage = $loader->eloquent('Page');
+$pageList = $mPage::where('enable', '=', '1')->get();
 
-foreach ($langList as $language) {
-    $languages[$language['code']] = $language;
+foreach ($langList as $lang) {
+    $languages[$lang->code] = $lang;
     foreach ($pageList as $page) {
-        $page['code'] = get_lang_text($page['code'], $language['code']);
-        if(empty($page['code'])) continue;
-        $page['title'] = get_lang_text($page['title'], $language['code']);
-        $page['description'] = get_lang_text($page['description'], $language['code']);
-        $page['keywords'] = get_lang_text($page['keywords'], $language['code']);
-        $page['lang'] = $language['code'];
+        $page->unique = get_lang_text($page->code, $lang->code);
+        if(empty($page->unique)) continue;
+        $p = new stdClass();
+        $p->id = $page->id;
+        $p->code = $page->code;
+        $p->unique = $page->unique;
+        $p->title = get_lang_text($page->title, $lang->code);
+        $p->description = get_lang_text($page->description, $lang->code);
+        $p->keyword = get_lang_text($page->keyword, $lang->code);
+        $p->robot = get_lang_text($page->keyword, $lang->code);
+        $p->lang = $lang->code;
 
-        $pages[$page['code']] = $page;
+        $pages[$page->unique] = $p;
+        unset($page);
     }
 }
 
+// Url
+$url = new Url($request, $config->get('config_url'), $config->get('config_ssl'));
 $url->addRewrite($pages);
-
-// Route Detection
-$route = $url->getCurrentRoute();
+$route = $url->current();
 $routes = $loader->file('routes');
-
-$findPage = function() use ($pages, $route, &$code, $session, $config) {
+$findPage = function() use ($pages, $route, &$language_code, $session, $config) {
     if(in_array($route, array_keys($pages))){
-        $pageCurrent = $pages[$route];
-        $code = $pageCurrent['lang'];
+        $currPage = $pages[$route];
+        $language_code = $currPage->lang;
     } else {
-        $code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
+        $language_code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
         $page_id = empty($route) ? PAGE_HOME : PAGE_ERROR;
         foreach ($pages as $page) {
-            if ($page['lang'] == $code && $page['id'] == $page_id) {
-                $pageCurrent = $page;
+            if ($page->lang == $language_code && $page->id == $page_id) {
+                $currPage = $page;
             }
         }
     }
-    return $pageCurrent;
+    return $currPage;
 };
-
-$pageCurrent = $findPage();
-$route = $routes[$pageCurrent['id']];
-
-// Document
-$document = new Document();
-$registry->set('document', $document);
-
-$domain = $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url');
-//$document->setBase($domain);
-$document->setTitle($pageCurrent['title'] . " | " . $config->get('config_name'));
-$document->setDescription($pageCurrent['description']);
-$document->setKeywords($pageCurrent['keywords']);
-$document->setLanguage(array("code"=>$languages[$code]['code'], "direction"=>$languages[$code]['directory']));
+$currPage = $findPage();
+$route = $routes[$currPage->id];
 
 /*
 if (isset($session->data['language']) && array_key_exists($session->data['language'], $languages)) {
@@ -181,25 +149,29 @@ if (isset($session->data['language']) && array_key_exists($session->data['langua
 }
 */
 
-if (!isset($session->data['language']) || $session->data['language'] != $code) {
-    $session->data['language'] = $code;
+if (!isset($session->data['language']) || $session->data['language'] != $language_code) {
+    $session->data['language'] = $language_code;
 }
 
-if (!isset($request->cookie['language']) || $request->cookie['language'] != $code) {
-    setcookie('language', $code, time() + 60 * 60 * 24 * 30, '/', $request->server['HTTP_HOST']);
+if (!isset($request->cookie['language']) || $request->cookie['language'] != $language_code) {
+    setcookie('language', $language_code, time() + 60 * 60 * 24 * 30, '/', $request->server['HTTP_HOST']);
 }
 
-$config->set('config_language_id', $languages[$code]['language_id']);
-$config->set('config_language', $languages[$code]['code']);
-$config->set('config_directory', $languages[$code]['directory']);
+if ( empty($config->get('config_directory')) || ($config->get('config_directory') != $languages[$language_code]['directory'])) {
+    $config->set('config_directory', $languages[$language_code]['directory']);
+}
 
 // Language
-$language = new Language($languages[$code]['directory']);
-$language->load($languages[$code]['directory']);
-$language->set('current', $code);
-$registry->set('language', $language);
+$language = new Language($config->get('config_directory'));
+$language->set('current', $language_code);
 
+//$document->setBase($config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));
+$document->setTitle($currPage->title . " | " . $config->get('config_name'));
+$document->setDescription($currPage->description);
+$document->setKeywords($currPage->keyword);
+$document->setLanguage(array("code"=>$language_code, "direction"=>$config->get('config_directory')));
 
+/*
 // Customer
 if(PACKAGE_CUSTOMER) {
     $customer = new Customer($registry);
@@ -260,9 +232,20 @@ if(PACKAGE_EVENT) {
         $event->register($result['trigger'], $result['action']);
     }
 }
+*/
 
-// Front Controller
-$controller = new Front($registry);
+$registry->set('load', $loader);
+$registry->set('config', $config);
+$registry->set('db', $db);
+$registry->set('log', $log);
+$registry->set('request', $request);
+$registry->set('url', $url);
+$registry->set('response', $response);
+$registry->set('cache', $cache);
+$registry->set('session', $session);
+$registry->set('document', $document);
+$registry->set('language', $language);
+
 
 // Maintenance Mode
 //$controller->addPreAction(new Action('common/maintenance'));
@@ -270,11 +253,9 @@ $controller = new Front($registry);
 // SEO URL's
 //$controller->addPreAction(new Action('common/seo_url'));
 
-// Router
+$controller = new Front($registry);
 $action = new Action($route);
-
-// Dispatch
 $controller->dispatch($action, new Action('Error@not_found'));
-
-// Output
+$response->addHeader('Content-Type', 'text/html; charset=utf-8');
+$response->setCompression($config->get('config_compression'));
 $response->output();

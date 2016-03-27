@@ -1,8 +1,8 @@
 <?php
-class SettingModel extends Model {
-    public function getSetting() {
-        $query = $this->db->query("SELECT * FROM " . TABLE_SETTING);
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
-        return $query->rows;
-    }
+class SettingModel extends Eloquent {
+
+    protected $table        = TABLE_SETTING;
+    
 }

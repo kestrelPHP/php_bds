@@ -1,6 +1,15 @@
-/**
- * 
- */
+var doc = {};
+doc.scrollElementToCenter = function ($element) {
+    if (!$element.length) {
+        return;
+    }
+
+    jQuery('html, body').animate({scrollTop: $element.offset().top - 200}, 300, function () {
+    });
+};
+doc.scrollToTop = function () {
+    jQuery('html, body').animate({scrollTop: 0}, 300);
+};
 
 jQuery(document).ready(function() {
     jQuery('#preview-mobile-website').data('reveal-init', {

@@ -15,13 +15,17 @@
                                 <label for="FirstName">First Name:</label>
                                 <input type="text" class="form-control" id="FirstName"
                                        ng-model="member.FirstName" name="member[FirstName]"
-                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[FirstName]')}" required>
+                                       ng-class="{'alert-border': ngErrorRequired(formEdit, 'member[FirstName]')}" required>
+                                <label ng-show="ngErrorRequired(formEdit, 'member[FirstName]')"
+                                       class="error">First name is required</label>
                             </div>
                             <div class="form-group">
                                 <label for="UserName">Login Name:</label>
                                 <input type="text" class="form-control" id="UserName"
                                        ng-model="member.UserName" name="member[UserName]"
-                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[UserName]')}" required>
+                                       ng-class="{'alert-border': ngErrorRequired(formEdit, 'member[UserName]')}" required>
+                                <label ng-show="ngErrorRequired(formEdit, 'member[UserName]')"
+                                       class="error">Username is required</label>
                             </div>
                             <div class="form-group">
                                 <label for="Password">Password:</label>
@@ -51,13 +55,19 @@
                                 <label for="LastName">Last Name:</label>
                                 <input type="text" class="form-control" id="LastName"
                                        ng-model="member.LastName" name="member[LastName]"
-                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[LastName]')}" required>
+                                       ng-class="{'alert-border': ngErrorRequired(formEdit, 'member[LastName]')}" required>
+                                <label ng-show="ngErrorRequired(formEdit, 'member[LastName]')"
+                                       class="error">Last name is required</label>
                             </div>
                             <div class="form-group">
                                 <label for="Email">Email:</label>
                                 <input type="text" class="form-control" id="Email"
                                        ng-model="member.Email" name="member[Email]"
-                                       ng-class="{'alert-border': ngErrorRequired('formEdit', 'member[Email]')}" required>
+                                       ng-class="{'alert-border': ngErrorRequired(formEdit, 'member[Email]')}" required multiple-email>
+                                <label ng-show="ngErrorRequired(formEdit, 'member[Email]')"
+                                       class="error">Email is required</label>
+                                <label ng-show="ngInvalidEmail(formEdit, 'member[Email]')"
+                                       class="error">Email is invalid</label>
                             </div>
                             <div class="form-group">
                                 <label for="Confirm">Re-type Password:</label>

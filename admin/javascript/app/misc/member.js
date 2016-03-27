@@ -30,7 +30,7 @@ app.controller('MemberController',
         $scope.init = function (data) {
             $scope.link     = link;
             if ( typeof data != isInvalid ) {
-                $scope.test     = data.test || {};
+                // $scope.test     = data.test || {};
                 $scope.list     = data.list || {};
                 $scope.header   = data.header || {};
                 $scope.filter   = data.filter || {};
@@ -143,7 +143,7 @@ app.controller('MemberController',
            }else{
                var $elm = jQuery('#modalEdit input.ng-invalid:first');
                $elm.focus();
-               app.scrollElementToCenter($elm);
+               doc.scrollElementToCenter($elm);
            }
         };
 
@@ -216,91 +216,24 @@ app.controller('MemberController',
         $scope.init();
         $scope.fetchPage();
 
-        jQuery('#modalDel, #modalEdit').data('reveal-init', {
-            animation: 'fadeAndPop',
-            animation_speed: 250,
-            close_on_background_click: true,
-            close_on_esc: true,
-            dismiss_modal_class: 'close-reveal-modal',
-            bg_class: 'reveal-modal-bg',
-            bg: jQuery('.reveal-modal-bg'),
-            css: {
-                open: {
-                    'opacity': 0,
-                    'visibility': 'visible',
-                    'display': 'block'
-                },
-                close: {
-                    'opacity': 1,
-                    'visibility': 'hidden',
-                    'display': 'none'
-                }
-            }
-        });
-
         $scope.ngDirtyInvalid = function(form, elementName) {
-                return ($scope[form][elementName].$dirty
-            && $scope[form][elementName].$invalid && $scope.submitted);
+                return (form[elementName].$dirty
+            && form[elementName].$invalid && $scope.submitted);
         };
         $scope.ngInvalid = function(form, elementName) {
-                return ($scope[form][elementName].$invalid && $scope.submitted);
+                return (form[elementName].$invalid && $scope.submitted);
         };
         $scope.ngInvalidEmail = function(form, elementName) {
-                return ($scope[form][elementName].$error.multipleEmails && $scope.submitted);
+                return (form[elementName].$error.multipleEmails && $scope.submitted);
         };
         $scope.ngDirtyErrorRequired = function(form, elementName) {
-            return ($scope[form][elementName].$dirty
-            && $scope[form].$error.required && $scope.submitted);
+            return (form[elementName].$dirty
+            && form.$error.required && $scope.submitted);
         };
-        $scope.ngErrorRequired = function(form, elementName) {return false;
-            //return ($scope[form][elementName].$error.required && $scope.submitted);
+        $scope.ngErrorRequired = function(form, elementName) {
+            return (form[elementName].$error.required && $scope.submitted);
         };
 
         jQuery('#modalEdit').on('hidden.bs.modal', function() { $timeout(function() { $scope.start_edit = false; }, 500); });
         jQuery('#modalEdit').on('show.bs.modal', function() { $scope.start_edit = true; });
-
-        //Begin Calendar]
-        $scope.showCalendar = function () {
-            var dateToday = new Date();
-            var yrRange = dateToday.getFullYear()-50 + ":" + (dateToday.getFullYear());
-            var optionDate = {dateFormat: 'dd M yy', numberOfMonths: 1, stepMonths: 1, maxDate: 0 ,changeMonth: true,
-                changeYear: true, yearRange: yrRange};
-            jQuery("#guideDOB").datepicker(optionDate);
-        };
-        $scope.revertToString = function (date) {
-            return Date.parse(date) / 1000;
-        };
-        $scope.convertToDate = function (stringDate) {
-            var myObj = stringDate,
-                myDate = new Date(1000 * myObj);
-            return (myDate.toDateString());
-        };
-        $scope.convertDate = function (string) {
-            var mnths = {
-                1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
-                7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec"
-            };
-            var date = new Date(string);
-            var date_value = [date.getDate(), mnths[date.getMonth() + 1], date.getFullYear()].join(" ");
-            return date_value;
-        };
-        // translate calender
-        $scope.translateCalendar = function (element, calender) {
-            var temp = element;
-            temp = temp.replace('Jan', calender[0]);
-            temp = temp.replace('Feb', calender[1]);
-            temp = temp.replace('Mar', calender[2]);
-            temp = temp.replace('Apr', calender[3]);
-            temp = temp.replace('May', calender[4]);
-            temp = temp.replace('Jun', calender[5]);
-            temp = temp.replace('Jul', calender[6]);
-            temp = temp.replace('Aug', calender[7]);
-            temp = temp.replace('Sep', calender[8]);
-            temp = temp.replace('Oct', calender[9]);
-            temp = temp.replace('Nov', calender[10]);
-            temp = temp.replace('Dec', calender[11]);
-            element = temp;
-            return element;
-        };
-        //End Calendar
 });

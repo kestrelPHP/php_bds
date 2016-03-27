@@ -23,7 +23,7 @@
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,400i,300,700" rel="stylesheet" type="text/css"/>
 
-    <link href="app/javascript/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="app/static/js/library/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <?php foreach ($styles as $style) { ?><link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>"
           media="<?php echo $style['media']; ?>"/>
     <?php } ?>
@@ -34,8 +34,8 @@
     <link href="app/static/css/flag-icon.css" rel="stylesheet" type="text/css"/>
     <link href="app/static/css/reset.css" rel="stylesheet" type="text/css"/>
     <link href="app/static/css/style.css" rel="stylesheet" type="text/css"/>
-    <script src="app/javascript/jquery/jquery-2.1.1.min.js" type="text/javascript"></script>
-    <script src="app/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="app/static/js/library/jquery/jquery-2.1.1.min.js" type="text/javascript"></script>
+    <script src="app/static/js/library/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 </head>
 <body class="">
 <div id="page-wrapper">
@@ -62,7 +62,7 @@
 <?php foreach ($scripts as $script) { ?>
 <script src="<?php echo $script; ?>" type="text/javascript"></script>
 <?php } ?>
-<script src="app/javascript/detectmobilebrowser.js" type="text/javascript"></script>
-<script src="app/javascript/common.js" type="text/javascript"></script>
+<script src="app/static/js/library/detectmobilebrowser.js" type="text/javascript"></script>
+<script src="app/static/js/common.js" type="text/javascript"></script>
 </body>
 </html>

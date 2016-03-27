@@ -137,11 +137,107 @@ app.directive('tinymce', ['$timeout', function ($timeout) {
     };
 }]);
 
+app.directive('multipleEmail', ['$timeout', function () {
+    var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+
+    function validateAll(ctrl, validatorName, value) {
+        var validity = ctrl.$isEmpty(value) || value.split(',').every(
+                function (email) {
+                    return EMAIL_REGEXP.test(email.trim());
+                }
+            );
+
+        ctrl.$setValidity(validatorName, validity);
+        return validity ? value : undefined;
+    }
+
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function postLink(scope, elem, attrs, modelCtrl) {
+            function multipleEmailsValidator(value) {
+                return validateAll(modelCtrl, 'multipleEmails', value);
+            }
+
+            modelCtrl.$formatters.push(multipleEmailsValidator);
+            modelCtrl.$parsers.push(multipleEmailsValidator);
+        }
+    };
+}]);
+
+app.directive('preventDefault', ['$timeout', function() {
+    return function(scope, element, attrs) {
+        element.bind('click', function(event) {
+            event.preventDefault();
+        });
+    };
+}]);
+
+app.directive('autoUrl', ['$timeout', function($timeout) {
+    /*var url = this.replace(/[^0-9a-zA-Z]/g, " ");
+     url = url.replace(/\s\s+/g, " ").trim();
+     url = url.replace(/\s/g, "-");*/
+    //return url.toLowerCase();
+
+    return {
+        restrict: 'A',
+        link: function(scope, elm, attrs) {
+            $timeout(function() {
+                if ( elm.hasClass('ng-pristine') && !elm.val() ) {
+                    var title = attrs.autoUrl;
+                    if ( title ) {
+                        scope.$watch(title, function() {
+                            var url = scope.$eval(title);
+                            if ( url ) {
+                                url = url.replace(/[^0-9a-zA-Z]/g, " ");
+                                url = url.replace(/\s\s+/g, " ").trim();
+                                url = url.replace(/\s/g, "-");
+                                url = url.toLowerCase();
+                                elm.val(url);
+
+                                if ( scope.autoUrlChange ) {
+                                    scope.autoUrlChange();
+                                }
+                            }
+                        }, true);
+                    }
+                }
+            }, 300);
+        }
+    };
+}]);
+
+app.directive('minicolors', ['$timeout', function($timeout) {
+    return function(scope, element, attrs) {
+        var options = {
+            letterCase: 'uppercase'
+        };
+        if(attrs.minicolors) {
+            var expr = scope.$eval(attrs.tinymce);
+            angular.extend(options, expr);
+        }
+        $timeout(function() {
+            element.minicolors(options);
+        }, 500);
+    };
+}]);
+
+app.directive('defaultcolor', ['$timeout', function() {
+    return function(scope, element, attrs) {
+        element.click(function() {
+            var id = element.attr('data-orign');
+            if ( id ) {
+                var $color = jQuery('#' + id);
+                $color.minicolors('value', attrs.defaultcolor);
+            }
+        });
+    };
+}]);
+
 app.directive('fileupload', ['$timeout', function($timeout) {
     return function (scope, element, attrs) {
         if (attrs.id) {
             var id = '#' + attrs.id;
-            //element.hide();
             attrs.$set('tabindex', -1);
             attrs.$set('style', 'position: absolute; left: -9999px;');
 
@@ -152,16 +248,6 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                 var $error_message = jQuery(id + 'ErrorMessage');
                 var $delete = jQuery(id + 'Delete');
                 var old_file = null;
-                // jQuery('accm-submit-button').addClass('button-disable');
-                // if ($text.val()) {
-                //     old_file = $text.val();
-                //     $delete.show();
-                //     jQuery('accm-submit-button').addClass('button-disable');
-                // }
-                // else {
-                //     $delete.hide();
-                //     jQuery('accm-submit-button').removeClass('button-disable');
-                // }
 
                 $button.attr('tabindex', -1);
                 $button.click(function () {
@@ -170,7 +256,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                 });
 
                 var options = null;
-                if (attrs.fileupload) {
+                if (attrs.fileupload ) {
                     options = scope.$eval(attrs.fileupload);
                 }
 
@@ -202,7 +288,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                             cache: false,
                             dataType: 'json',
                             processData: false, // Don't process the files
-                            contentType: false, // Set content type to false as 
+                            contentType: false, // Set content type to false as
                             //jQuery will tell the server its a query string request
                             beforeSend: function () {
                                 $message.text($message.attr('data-deleting')).show();
@@ -210,11 +296,9 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                                 jQuery('#accm-submit-button-upload').show();
                                 jQuery('#accm-submit-button').hide();
                             },
-                            success: function (data) {
+                            success: function (response) {
                                 $text.removeClass('processing');
-                                jQuery('#accm-submit-button-upload').hide();
-                                jQuery('#accm-submit-button').show();
-                                //scope.filee...                            	
+                                //scope.file...
                                 $message.hide();
                                 $error_message.hide();
                                 element.replaceWith(element = element.clone(true));
@@ -223,7 +307,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                                 $text.val('').removeAttr('title');
                                 jQuery('#show-icon-download').hide();
                                 $delete.hide();
-                                //scope.$apply();       
+                                //scope.$apply();
                                 if (scope.fileUploadChange) {
                                     scope.fileUploadChange();
                                 }
@@ -242,13 +326,10 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                         $delete.hide();
                     }
                 });
-                jQuery("#uxLogoDelete").click(function () {
-                    jQuery('#accm-submit-button-upload').hide();
-                    jQuery('#accm-submit-button').show();
-                });
+
+
                 element.change(function (evt) {
-                    var filename;
-                    filename = element.val().split('\\').pop();
+                    var filename = element.val().split('\\').pop();
 
                     if (options && options.validate_size) {
                         var validator_size = 2048 * 1024 * 5;
@@ -266,11 +347,11 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                             }
                         }
                     }
-
+                   
                     $text.val(filename) // Set the value
                         .attr('title', filename) // Show filename in title tootlip
                         .focus(); // Regain focus
-
+                    
                     if (!options) {
                         if (scope.fileUploadChange) {
                             scope.fileUploadChange();
@@ -309,7 +390,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                                     cache: false,
                                     dataType: 'json',
                                     processData: false, // Don't process the files
-                                    contentType: false, // Set content type to false as 
+                                    contentType: false, // Set content type to false as
                                     //jQuery will tell the server its a query string request
                                     beforeSend: function () {
                                         $error_message.hide();
@@ -338,7 +419,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                                             jQuery('#accm-submit-button').hide();
                                         }
                                         else {
-                                            //$error_message.text($error_message.attr('data-empty')).show();		                            		
+                                            //$error_message.text($error_message.attr('data-empty')).show();
                                             $text.val(data.name);
                                             element.val('');
                                             $delete.show();
@@ -357,7 +438,7 @@ app.directive('fileupload', ['$timeout', function($timeout) {
                                 });
                             });
                         }
-                    } //-----end auto upload	
+                    } //-----end auto upload
                     else {
                         if (scope.fileUploadChange) {
                             scope.fileUploadChange();

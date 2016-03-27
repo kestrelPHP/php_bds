@@ -19,16 +19,19 @@ if (is_file('../constant.php')) {
 // Startup
 require_once(DIR_SYSTEM . 'startup.php');
 
-
-// Registry
+// init class
 $registry = new Registry();
-
-// Loader
 $loader = new Loader($registry);
-$registry->set('load', $loader);
+$config = new Config();
+$request = new Request();
+$response = new Response();
+$cache = new Cache('file');
+$session = new Session();
+$document = new Document();
+
 
 // Config
-$config = new Config();
+
 $registry->set('config', $config);
 
 // Database
@@ -40,8 +43,8 @@ $config->set('config_url', HTTP_SERVER);
 $config->set('config_ssl', HTTPS_SERVER);
 
 // Settings
-$modelSetting = $loader->eloquent('Setting');
-$settings = $modelSetting::all();
+$mSetting = $loader->eloquent('Setting');
+$settings = $mSetting::all();
 foreach ($settings as $result) {
     if (!$result['serialized']) {
         $config->set($result['key'], $result['value']);
@@ -51,8 +54,6 @@ foreach ($settings as $result) {
 }
 // Log
 $log = new Log($config->get('config_error_filename'));
-$registry->set('log', $log);
-
 function error_handler($code, $message, $file, $line) {
     global $log, $config;
 
@@ -89,132 +90,57 @@ function error_handler($code, $message, $file, $line) {
 
     return true;
 }
-
-// Error Handler
 set_error_handler('error_handler');
 
-// Request
-$request = new Request();
-$registry->set('request', $request);
+// Url
+$url = new Url($request, $config->get('config_url'), $config->get('config_ssl'));
+$route = $url->currentAdmin();
 
-// Api
-$api = new Api($request, $config->get('config_url'), $config->get('config_secure') ? $config->get('config_ssl') : $config->get('config_url'));
-$registry->set('url', $api);
-
-// Response
-$response = new Response();
-$response->addHeader('Content-Type', 'text/html; charset=utf-8');
-//$response->setCompression($config->get('config_compression'));
-$registry->set('response', $response);
-
-// Cache
-$cache = new Cache('file');
-$registry->set('cache', $cache);
-
-// Session
-$session = new Session();
-$registry->set('session', $session);
-
-// Language Detection
+// Languages
 $languages = array();
-$langList = $loader->model('Language', 'fetchAll');
-$select_lang = array();
+$mLanguage = $loader->eloquent("Language");
+$langList = $mLanguage::where('enable', '=', '1')->get();
 
-foreach ($langList as $language) {
-    $languages[$language['code']] = $language;
-    $select_lang[] = array($language['code'],$language['name']);
+foreach ($langList as $lang) {
+    $languages[$lang['code']] = $lang;
+//    $select_lang[] = array($lang['code'],$lang['name']);
 }
 
-$code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
+$language_code = isset($session->data['language']) ? $session->data['language'] : $config->get('config_language');
 
-// Document
-$document = new Document();
-$registry->set('document', $document);
-
-if (!isset($session->data['language']) || $session->data['language'] != $code) {
-    $session->data['language'] = $code;
+if (!isset($session->data['language']) || $session->data['language'] != $language_code) {
+    $session->data['language'] = $language_code;
 }
 
-if (!isset($request->cookie['language']) || $request->cookie['language'] != $code) {
-    setcookie('language', $code, time() + 60 * 60 * 24 * 30, '/', $request->server['HTTP_HOST']);
+if (!isset($request->cookie['language']) || $request->cookie['language'] != $language_code) {
+    setcookie('language', $language_code, time() + 60 * 60 * 24 * 30, '/', $request->server['HTTP_HOST']);
 }
 
-$config->set('config_language_id', $languages[$code]['language_id']);
-$config->set('config_language', $languages[$code]['code']);
-$config->set('config_directory', $languages[$code]['directory']);
+if ( empty($config->get('config_directory')) || ($config->get('config_directory') != $languages[$language_code]['directory'])) {
+    $config->set('config_directory', $languages[$language_code]['directory']);
+}
 
 // Language
-$language = new Language($languages[$code]['directory']);
-$language->load($languages[$code]['directory']);
-$language->set('current', $code);
+$language = new Language($config->get('config_directory'));
+$language->set('current', $language_code);
+
+// document
+$data['direction'] = $config->get('config_directory');
+$data['lang'] = $language_code;
+
+
+$registry->set('load', $loader);
+$registry->set('config', $config);
+$registry->set('db', $db);
+$registry->set('log', $log);
+$registry->set('request', $request);
+$registry->set('url', $url);
+$registry->set('response', $response);
+$registry->set('cache', $cache);
+$registry->set('session', $session);
+$registry->set('document', $document);
 $registry->set('language', $language);
 
-
-// Customer
-if(PACKAGE_CUSTOMER) {
-    $customer = new Customer($registry);
-    $registry->set('customer', $customer);
-
-    // Customer Group
-    if ($customer->isLogged()) {
-        $config->set('config_customer_group_id', $customer->getGroupId());
-    } elseif (isset($session->data['customer']) && isset($session->data['customer']['customer_group_id'])) {
-        // For API calls
-        $config->set('config_customer_group_id', $session->data['customer']['customer_group_id']);
-    } elseif (isset($session->data['guest']) && isset($session->data['guest']['customer_group_id'])) {
-        $config->set('config_customer_group_id', $session->data['guest']['customer_group_id']);
-    }
-}
-
-// Affiliate
-if(PACKAGE_AFFILIATE)
-    $registry->set('affiliate', new Affiliate($registry));
-
-// Currency
-if(PACKAGE_CURRENCY)
-    $registry->set('currency', new Currency($registry));
-
-// Tax
-if(PACKAGE_TAX)
-    $registry->set('tax', new Tax($registry));
-
-// Weight
-if(PACKAGE_WEIGHT)
-    $registry->set('weight', new Weight($registry));
-
-// Length
-if(PACKAGE_LENGTH)
-    $registry->set('length', new Length($registry));
-
-// Cart
-if(PACKAGE_CART)
-    $registry->set('cart', new Cart($registry));
-
-// Encryption
-if(PACKAGE_ENCRYPTION)
-    $registry->set('encryption', new Encryption($config->get('config_encryption')));
-
-// OpenBay Pro
-if(PACKAGE_OPENBAY)
-    $registry->set('openbay', new Openbay($registry));
-
-// Event
-if(PACKAGE_EVENT) {
-    $event = new Event($registry);
-    $registry->set('event', $event);
-
-    $loader->model('Event');
-    $events = $registry->get('model_event')->getEvent();
-
-    foreach ($events as $result) {
-        $event->register($result['trigger'], $result['action']);
-    }
-}
-
-
-$data = $document->getData();
-$data['direction'] = $config->get('config_directory');
-$data['lang'] = $config->get('config_language');
 
 if(1!=1){
     $templatePath = "login.html";
@@ -237,13 +163,15 @@ if(1!=1){
     $templatePath = "master.html";
 }
 
-$route = $api->getCurrentRoute();
 if(!empty($route)){
     $data = $loader->json($route);
     $response->addHeader('Content-Type: application/json');
     $response->setJsonOutput($data);
 
 } else {
+    $response->addHeader('Content-Type', 'text/html; charset=utf-8');
+//$response->setCompression($config->get('config_compression'));
+    $registry->set('response', $response);
     $response->setOutput($loader->view( $templatePath , $data));
 }
 

@@ -1,7 +1,7 @@
 <?php
 class Language {
 	private $default = 'english';
-	private $directory;
+	private $directory = "english";
 	private $data = array();
 
 	public function __construct($directory = '') {

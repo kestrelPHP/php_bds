@@ -18,7 +18,11 @@ app.controller('SettingController',
 
         // init Tinymce
         $scope.tiny_options = $tinymceOptions.tiny;
-        
+        $scope.fileupload_options = $uploadOptions.default;
+        $scope.fileUploadChange = function () {
+
+        };
+
         $scope.init = function (data) {
             if ( typeof data != isInvalid ) {
                 $scope.sidebar = data.sidebar || {};
@@ -161,7 +165,6 @@ app.controller('SettingController',
         if( $scope.tiny_options !== isInvalid ) tinyMCE.init($scope.tiny_options);
         $scope.init();
         $scope.fetchPage();
-        
 
         jQuery('#modalDel, #modalEdit').data('reveal-init', {
             animation: 'fadeAndPop',

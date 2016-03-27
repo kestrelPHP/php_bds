@@ -2,7 +2,6 @@
 // Declare app level module which depends on filters, and services
 var app = angular.module('ngAdmin', ['ngRoute', 'ngResource']);
 
-
 var isObject = angular.isObject,
     isUndefined = angular.isUndefined,
     isDefined = angular.isDefined,
@@ -21,20 +20,36 @@ var isObject = angular.isObject,
     loadingClass = 'deferred-bootstrap-loading',
     errorClass = 'deferred-bootstrap-error';
 
-app.scrollElementToCenter = function($element) {
-    if ( !$element.length ) {
-        return;
-    }
-    jQuery('html, body').animate({ scrollTop: $element.offset().top - 200 }, 300, function () {
-        /*for(var i = 0; i < 2; i++) {
-         $element.animate({"margin-left": "+=5px"}, 100)
-         .animate({"margin-left": "-=5px"}, 100);
-         }*/
-    });
-};
 
-app.scrollToTop = function() {
-    jQuery('html, body').animate({ scrollTop: 0 }, 300);
+function __render( value1, value2 ) {
+    if ( value2 != isUndefined ) return { key : value1, value: value2};
+    return { key : value1 };
+}
+
+(function (app) {
+    function AppConfig() {
+        throw "Static Class. AppConfig cannot be instantiated.";
+    }
+
+    var self = AppConfig;
+
+    self.testMode = false;
+    self.actionPath = "/admin/";
+    self.templatePath = "view/";
+    self.uploadPath = "../uploads/";
+    app.conf = AppConfig;
+
+}(app = app || {}));
+
+
+var $uploadOptions = {};
+$uploadOptions.default = {
+    auto_upload: true,
+    upload_path: app.conf.actionPath + 'file@upload',
+    delete_path: app.conf.actionPath + 'file@delete',
+    form_build_id: '',
+    form_token: '',
+    form_id: ''
 };
 
 var $tinymceOptions = {};
@@ -117,27 +132,6 @@ $tinymceOptions.tiny = {
 app.config(['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode(false).hashPrefix('!');
 }]);
-
-function __render( value1, value2 ) {
-    if ( value2 != isUndefined ) return { key : value1, value: value2};
-    return { key : value1 };
-}
-
-(function (app) {
-    function AppConfig() {
-        throw "Static Class. AppConfig cannot be instantiated.";
-    }
-
-    var self = AppConfig;
-
-    self.testMode = false;
-    self.actionPath = "/admin/";
-    self.templatePath = "view/";
-    self.uploadPath = "../uploads/";
-
-    app.conf = AppConfig;
-
-}(app = app || {}));
 
 
 var controllers = [];

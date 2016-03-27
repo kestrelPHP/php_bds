@@ -3,6 +3,7 @@ class Url {
 	private $domain;
 	private $ssl;
     private $route;
+    private $routeAdmin;
     private $current;
     private $args;
     private $id = 0;
@@ -18,7 +19,7 @@ class Url {
 	public function addRewrite($rewrite) {
 		//$this->rewrite[] = $rewrite;
         foreach ($rewrite as $item) {
-            $this->rewrite[$item['id']][$item['lang']] = $item['code'];
+            $this->rewrite[$item->id][$item->lang] = $item->unique;
         }
 	}
 
@@ -51,7 +52,10 @@ class Url {
 	}
 
     private function setParam() {
+        $this->routeAdmin = isset($this->request->get['q']) ? trim($this->request->get['q'], "/") : "";
+        
         $uri = isset($this->request->server['REDIRECT_URL']) ? $this->request->server['REDIRECT_URL'] : $this->request->server['REQUEST_URI'];
+        
         $request = trim($uri, "/");
         $parts = explode('/', str_replace('../', '', $request));
 
@@ -86,14 +90,21 @@ class Url {
         return isset($this->rewrite[$page_id][$lang_code]) ? $this->rewrite[$page_id][$lang_code] : "";
     }
 
-    public function getCurrentRoute(){
+    public function current(){
 
         return trim(strtolower($this->route), '/');
     }
+
+    public function currentAdmin(){
+
+        return trim(strtolower($this->routeAdmin), '/');
+    }
+    
     public function getParam(){
 
         return $this->args;
     }
+
     public function getId(){
         if($this->route == $this->current)
             return $this->id;

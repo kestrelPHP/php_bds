@@ -10,9 +10,7 @@ class Document {
 	private $scripts = array();
 
     public function setLanguage($language) {
-        $array['code'] = $language['code'];
-        $array['direction'] = $language['direction'];
-        $this->language = $array;
+        $this->language = $language;
     }
 
     public function getLanguge() {

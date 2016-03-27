@@ -11,6 +11,6 @@ class FooterController extends Controller
 
     public function index(){
 
-        return $this->load->view('footer/footer.tpl');
+        $this->render('footer/footer.tpl');
     }
 }

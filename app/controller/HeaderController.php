@@ -13,7 +13,7 @@ class HeaderController extends Controller
         $routes = $this->url;
         $language = $this->language;
 
-        $data['link_current']       = $routes->getCurrentRoute();
+        $data['link_current']       = $routes->current();
         $data['link_home_vn']       = $routes->getRoute(PAGE_HOME, "vn");
         $data['link_home_en']       = $routes->getRoute(PAGE_HOME, "en");
         $data['link_service']       = $routes->getRoute(PAGE_SERVICE, $language->get('current'));
@@ -34,6 +34,6 @@ class HeaderController extends Controller
         $data['lang_contact']       = $language->get('lang_contact');
         $data['lang_portfolio']     = $language->get('lang_portfolio');
 
-        return $this->load->view('header/header.tpl', $data);
+        $this->render('header/header.tpl', $data);
     }
 }
