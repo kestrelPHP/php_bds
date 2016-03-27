@@ -1,0 +1,10 @@
+.htaccess
+DIR_LOGS
+config.php
+system/composer.json
+system/composer.lock
+system/composer.phar
+system/storage/
+system/vendor/
+uploads/
+.idea/workspace.xml
