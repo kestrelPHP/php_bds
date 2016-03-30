@@ -26,27 +26,27 @@ function __render( value1, value2 ) {
     return { key : value1 };
 }
 
-(function (app) {
-    function AppConfig() {
-        throw "Static Class. AppConfig cannot be instantiated.";
-    }
-
-    var self = AppConfig;
-
-    self.testMode = false;
-    self.actionPath = "/admin/";
-    self.templatePath = "view/";
-    self.uploadPath = "../uploads/";
-    app.conf = AppConfig;
-
-}(app = app || {}));
+// (function (app) {
+//     function AppConfig() {
+//         throw "Static Class. AppConfig cannot be instantiated.";
+//     }
+//
+//     var self = AppConfig;
+//
+//     self.testMode = false;
+//     self.actionPath = "/admin/";
+//     self.templatePath = "view/";
+//     self.uploadPath = "../uploads/";
+//     app.conf = AppConfig;
+//
+// }(app = app || {}));
 
 
 var $uploadOptions = {};
 $uploadOptions.default = {
     auto_upload: true,
-    upload_path: app.conf.actionPath + 'file@upload',
-    delete_path: app.conf.actionPath + 'file@delete',
+    upload_path: ktsSetting.ngKTSPath.action + 'file@upload',
+    delete_path: ktsSetting.ngKTSPath.action + 'file@delete',
     form_build_id: '',
     form_token: '',
     form_id: ''
@@ -72,6 +72,7 @@ $tinymceOptions.default = {
     force_br_newlines: false,
     force_p_newlines: true,
     forced_root_block: "p",
+    theme_advanced_fonts: ktsSetting.ngKTSPath.tinyMCEFonts,
     setup: function(ed) {
         ed.onChange.add(function(ed, l) {
             jQuery("#" + ed.editorId).val(l.content);
@@ -97,6 +98,7 @@ $tinymceOptions.small = {
     force_br_newlines: false,
     force_p_newlines: true,
     forced_root_block: "p",
+    theme_advanced_fonts: ktsSetting.ngKTSPath.tinyMCEFonts,
     setup: function(ed) {
         ed.onChange.add(function(ed, l) {
             jQuery("#" + ed.editorId).val(l.content);
@@ -122,6 +124,7 @@ $tinymceOptions.tiny = {
     force_br_newlines: false,
     force_p_newlines: true,
     forced_root_block: "p",
+    theme_advanced_fonts: ktsSetting.ngKTSPath.tinyMCEFonts,
     setup: function(ed) {
         ed.onChange.add(function(ed, l) {
             jQuery("#" + ed.editorId).val(l.content);
@@ -162,11 +165,11 @@ controllers.push({
 });
 
 app.config(['$routeProvider', function ($routeProvider) {
-    var conf = app.conf;
+    var ktsPath =  ktsSetting.ngKTSPath;
     for ( var i in controllers ) {
         var c = controllers[i];
         c.path = c.url;
-        c.template = conf.templatePath + c.template || app.conf.templatePath + c.url.replace("/", "_") + '.html';
+        c.template = ktsPath.template + c.template || ktsPath.template + c.url.replace("/", "_") + '.html';
         c.controller = c.name;
         c.title = c.title || "Administrator | Website Management";
         $routeProvider.when(c.path, {templateUrl: c.template, controller: c.controller, title: c.title});
@@ -176,7 +179,7 @@ app.config(['$routeProvider', function ($routeProvider) {
 
 app.run(function ($rootScope, $location) {
     //jQuery(document).foundation();
-    var conf = app.conf;
+    var ktsPath = ktsSetting.ngKTSPath;
 
     $rootScope.$on('$locationChangeStart', function (event) {
         //Prevent run app
@@ -304,11 +307,11 @@ app.controller('MainController',
     });
 
 app.factory('apiService', function($http, $resource, $q) {
-    var conf = app.conf;
+    var ktsPath = ktsSetting.ngKTSPath;
     return {
         list: function(url, params) {
             var query = ( params != isUndefined || params != "") ? '?'+jQuery.param(params) : "";
-            var path = conf.actionPath + url + query;
+            var path = ktsPath.action + url + query;
             var resource = $resource(path);
             var deferred = $q.defer();
             resource.get(
@@ -340,7 +343,7 @@ app.factory('apiService', function($http, $resource, $q) {
             return promise;
         },
         save: function( url, form ) {
-            var path = conf.actionPath + url;
+            var path = ktsPath.action + url;
             var form = jQuery("#" + form.$name).serialize();
             var promise= $http.post( path, form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}} )
                 .then( function (response ) {
@@ -349,7 +352,7 @@ app.factory('apiService', function($http, $resource, $q) {
             return promise;
         },
         delete: function( url, pid ){
-            var url = conf.actionPath + url;
+            var url = ktsPath.action + url;
             var query = 'pid=' + pid;
             var promise = $http.post(url, query, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
                 .then(function (response) {

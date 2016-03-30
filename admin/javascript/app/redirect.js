@@ -14,7 +14,7 @@ if ( !path || path.indexOf('user/teams') == -1 ) {
 			window.history.pushState(null, '', hash);
 		}
 		else {
-			window.location.hash = '/admin/#!/dashboard';
+			window.location.hash = hash;
 		}
 	}
 }
