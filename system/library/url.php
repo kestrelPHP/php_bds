@@ -53,7 +53,7 @@ class Url {
 
     private function setParam() {
         $this->routeAdmin = isset($this->request->get['q']) ? trim($this->request->get['q'], "/") : "";
-        
+
         $uri = isset($this->request->server['REDIRECT_URL']) ? $this->request->server['REDIRECT_URL'] : $this->request->server['REQUEST_URI'];
         
         $request = trim($uri, "/");

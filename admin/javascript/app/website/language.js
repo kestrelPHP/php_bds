@@ -1,6 +1,3 @@
-/**
- * Ng controller for Hotel Setting Listing Page
- */
 "use strict";
 
 app.controller('LanguageController',
@@ -17,17 +14,22 @@ app.controller('LanguageController',
             list: '/website/language',
             edit: '/website/language@edit',
             save: '/website/language@save',
+            change: '/website/language@change',
             delete: '/website/language@delete'
         };
 
         // init Tinymce
         $scope.tiny_options = $tinymceOptions.tiny;
-        
+
         $scope.init = function (data) {
             $scope.link     = link;
             if ( typeof data != isInvalid ) {
-                $scope.sidebar = data.sidebar || {};
-                $scope.list = data.list || {};
+                $scope.list     = data.list || {};
+                $scope.global   = data.global || {};
+                $scope.header   = data.header || {};
+                $scope.filter   = data.filter || {};
+                $scope.paging   = data.paging || {};
+                $scope.gender   = data.gender || {};
             }
         };
 
@@ -48,7 +50,7 @@ app.controller('LanguageController',
                     }
                 }
             }
-            
+
             if (  $scope.paging == isDefined ) {
                 if (pageNum == 'n') pageNum = $scope.paging.PageNext;
                 else if (pageNum == 'p') pageNum = $scope.paging.PagePrev;
@@ -57,7 +59,7 @@ app.controller('LanguageController',
                     jQuery.extend(params, {pageNum: pageNum});
                     $scope.fetched = false;
                 }
-            }            
+            }
 
             if ( !$scope.fetched ) {
                 return apiService.list($scope.link.list, params).then(function (response) {
@@ -77,34 +79,49 @@ app.controller('LanguageController',
 
             apiService.get($scope.link.edit, id).then(function (response) {
                 var data = response.data;
-                $scope.obj = {};
+                $scope.member = {};
                 if ( typeof data != isInvalid ) {
-                    
+
+                    $scope.typeList = data.typeList;
+                    $scope.statusList = data.statusList;
+
+                    var member = data.member;
+                    $scope.member.ID = id;
+                    $scope.member.Type = __render(member.type);
+                    $scope.member.Active = __render(member.enable);
+                    $scope.member.FirstName = member.first_name;
+                    $scope.member.LastName = member.last_name;
+                    $scope.member.Email = member.email;
+                    $scope.member.UserName = member.login_name;
                 }
             });
         };
-        
-        $scope.save = function(form){
-           if ( $scope.saving ) {
-               return;
-           }
-           $scope.submitted = true;
+
+        $scope.change = function(id){
             
-           if( !form.$invalid ){
-               $scope.dataHasSaved();
-               $scope.saving = true;
-               apiService.save($scope.link.save, form).then(function (response) {
-                   $timeout(function () {
-                       $scope.saving = false;
-                       jQuery('#modelEdit').modal('toggle');
-                       $scope.init(response.data);
-                   }, 1000);
-               });
-           }else{
-               var $elm = jQuery('#modalEdit input.ng-invalid:first');
-               $elm.focus();
-               doc.scrollElementToCenter($elm);
-           }
+        };
+
+        $scope.save = function(form){
+            if ( $scope.saving ) {
+                return;
+            }
+            $scope.submitted = true;
+
+            if( !form.$invalid ){
+                $scope.dataHasSaved();
+                $scope.saving = true;
+                apiService.save($scope.link.save, form).then(function (response) {
+                    $timeout(function () {
+                        $scope.saving = false;
+                        jQuery('#modelEdit').modal('toggle');
+                        $scope.init(response.data);
+                    }, 1000);
+                });
+            }else{
+                var $elm = jQuery('#modalEdit input.ng-invalid:first');
+                $elm.focus();
+                doc.scrollElementToCenter($elm);
+            }
         };
 
         $scope.delete = function (id, name) {
@@ -176,14 +193,14 @@ app.controller('LanguageController',
         $scope.fetchPage();
 
         $scope.ngDirtyInvalid = function(form, elementName) {
-                return (form[elementName].$dirty
+            return (form[elementName].$dirty
             && form[elementName].$invalid && $scope.submitted);
         };
         $scope.ngInvalid = function(form, elementName) {
-                return (form[elementName].$invalid && $scope.submitted);
+            return (form[elementName].$invalid && $scope.submitted);
         };
         $scope.ngInvalidEmail = function(form, elementName) {
-                return (form[elementName].$error.multipleEmails && $scope.submitted);
+            return (form[elementName].$error.multipleEmails && $scope.submitted);
         };
         $scope.ngDirtyErrorRequired = function(form, elementName) {
             return (form[elementName].$dirty
@@ -195,4 +212,4 @@ app.controller('LanguageController',
 
         jQuery('#modalEdit').on('hidden.bs.modal', function() { $timeout(function() { $scope.start_edit = false; }, 500); });
         jQuery('#modalEdit').on('show.bs.modal', function() { $scope.start_edit = true; });
-});
+    });

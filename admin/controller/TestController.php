@@ -37,7 +37,7 @@ class TestController extends Controller
             $list = $items->rows;
 
             $listGender = array(
-                USER_GUST               =>  "-- Select --",
+                USER_GUEST               =>  "-- Select --",
                 USER_SUPER_ADMIN        =>  "Super Admin",
                 USER_ADMIN              =>  "Admin",
                 USER_PARTNER            =>  "Partner",

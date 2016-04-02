@@ -1,5 +1,5 @@
 <?php
-use Illuminate\Database\Capsule\Manager as Capsule;
+
 /**
  * Created by PhpStorm.
  * User: Nam Dinh
@@ -39,14 +39,14 @@ class MemberController extends Controller
             }
 
             // init values
-            $model = $this->load->eloquent("Member");
+            $model = $this->model("Member");
             $member = $model::_filter($params);
             $list = $member;
             $totalItems = $member->count();
             
 
             $listType = array(
-                USER_GUST               =>  "-- Select --",
+                USER_GUEST               =>  "-- Select --",
                 USER_SUPER_ADMIN        =>  "Super Admin",
                 USER_ADMIN              =>  "Admin",
                 USER_PARTNER            =>  "Partner",
@@ -107,7 +107,7 @@ class MemberController extends Controller
         }
 
         $listType = array(
-            USER_GUST               =>  "-- Select --",
+            USER_GUEST               =>  "-- Select --",
             USER_SUPER_ADMIN        =>  "Super Admin",
             USER_ADMIN              =>  "Admin",
             USER_PARTNER            =>  "Partner",

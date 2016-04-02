@@ -327,7 +327,7 @@ app.factory('apiService', function($http, $resource, $q) {
             return promise;
         },
         get: function( url, pid ) {
-            var url = conf.actionPath + url;
+            var url = ktsPath.action + url;
             var resource = $resource(url, {pid: '@id'});
             var deferred = $q.defer();
             resource.get(

@@ -56,11 +56,18 @@ define('TABLE_MEMBER',                      'user');
 define('TABLE_TOUR_GUIDE',                  'tour_guide');
 
 // Font
-define('FONT_ARIAL',                        'Arial');
-define('FONT_DROID',                        'Droid');
-define('FONT_LATO',                         'Lato');
-define('FONT_LORA',                         'Lora');
-define('FONT_OPEN_SANS',                    'Open Sans');
-define('FONT_ROBOTO',                       'Roboto');
-define('FONT_TOHAMA',                       'Tahoma');
-define('FONT_UBUNTU',                       'Ubuntu');
+define('FONT_ARIAL',                        'Arial, Helvetica, sans-serif');
+define('FONT_DROID',                        'Droid Serif, serif');
+define('FONT_LATO',                         'Lato, sans-serif');
+define('FONT_LORA',                         'Lora, serif');
+define('FONT_OPEN_SANS',                    'Open Sans, sans-serif');
+define('FONT_ROBOTO',                       'Roboto, sans-serif');
+define('FONT_TOHAMA',                       'Tahoma, Geneva, sans-serif');
+define('FONT_UBUNTU',                       'Ubuntu, sans-serif');
+
+define('DISABLE',                           0);
+define('ENABLE',                            1);
+
+define('STATUS_UNLOCK',                     0);
+define('STATUS_LOCK',                       1);
+define('STATUS_LIVE',                       2);

@@ -27,7 +27,7 @@ class PageController extends Controller
             $filter = array(
                 'Name'    => array('data' => "test", 'content' => '',
                     'label'=>'First Name','element' => 'text','class'=>'perc20'),
-                'Email'   => array('data' => USER_GUST, 'content' => $listGender,
+                'Email'   => array('data' => USER_GUEST, 'content' => $listGender,
                     'label' => 'Email', 'element' => 'select', 'class' => 'perc20')
             );
 
@@ -37,7 +37,7 @@ class PageController extends Controller
             $list = $items->rows;
 
             $listGender = array(
-                USER_GUST               =>  "-- Select --",
+                USER_GUEST               =>  "-- Select --",
                 USER_SUPER_ADMIN        =>  "Super Admin",
                 USER_ADMIN              =>  "Admin",
                 USER_PARTNER            =>  "Partner",

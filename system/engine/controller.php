@@ -15,6 +15,14 @@ abstract class Controller {
 	public function __set($key, $value) {
 		$this->registry->set($key, $value);
 	}
+
+	public function controller($name) {
+        return $this->load->controller($name);
+	}
+
+	public function model($name) {
+		return $this->load->eloquent($name);
+	}
 	
 	public function setOutPut($templatePath, $data=array()){
         $this->data = array_merge($this->data, $data);
