@@ -4,7 +4,7 @@
       <webServer id="287f46cd-2187-4c54-b64d-a1f3bf7212ce" name="core" url="http://localhost">
         <fileTransfer accessType="LOCAL" />
       </webServer>
-      <webServer id="287bd0ca-75d1-4a0c-83ee-7e864a9fdcc4" name="core" url="http://localhost">
+      <webServer id="287bd0ca-75d1-4a0c-83ee-7e864a9fdcc4" name="core (1)" url="http://localhost">
         <fileTransfer accessType="LOCAL" />
       </webServer>
     </option>
