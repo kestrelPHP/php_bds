@@ -140,7 +140,7 @@ $registry->set('cache', $cache);
 $registry->set('session', $session);
 $registry->set('document', $document);
 $registry->set('language', $language);
-
+$registry->set('response', $response);
 
 if(1!=1){
     $templatePath = "login.html";
@@ -169,10 +169,33 @@ if(!empty($route)){
     $response->setJsonOutput($data);
 
 } else {
+    $fonts = $loader->file('fonts');
+    $setting = array(
+        "name" => "ktsSetting",
+        "type" => "inline",
+        "data" => array(
+            "ngKTSPath" => array(
+                "template" =>"/admin/view/",
+                "action" => "/admin/",
+                "base_url" => "http://demo.local/admin/"
+            ),
+            "tinyMCEFonts" => implode(";", $fonts['font'])
+        )
+    );
+
+    $document->addScript($setting);
+//    $document->addScript("javascript/app/menu.js");
+//    $document->addScript("javascript/app/redirect.js");
+//    $document->addScript("javascript/app/app.js");
+//    $document->addScript("javascript/app/general.js");
+//    $document->addScript("javascript/app/directive.js");
+//    $document->addScript("javascript/app/dashboard.js");
+//    $document->addScript("javascript/app/website/setting.js");
+//    $document->addScript("javascript/app/website/language.js");
+//    $document->addScript("javascript/app/misc/member.js");
     $response->addHeader('Content-Type', 'text/html; charset=utf-8');
-//$response->setCompression($config->get('config_compression'));
-    $registry->set('response', $response);
-    $response->setOutput($loader->view( $templatePath , $data));
+    //$response->setCompression($config->get('config_compression'));
+    $response->setOutput($loader->view( $templatePath , $document->getData()));
 }
 
 $response->output();

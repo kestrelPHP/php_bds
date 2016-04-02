@@ -12,79 +12,123 @@ class LanguageController extends Controller
         try{
             $request = $this->request->request;
             $session = $this->session->data;
-            $data = $paging = $sidebar = $filter = $test = $list = array();
-            $listGender = array();
+            $data = $paging = $sidebar = $filter = $test = $list = $params = $global = array();
+            $user = new stdClass(); $user->type = 0;
+            $global = array (
+                'isGlobalAdmin'     => in_array($user->type, array(USER_ADMIN)),
+                'isMasterAdmin'     => in_array($user->type, array(USER_SUPER_ADMIN, USER_ADMIN)),
+                'isPartner'         => in_array($user->type, array(USER_PARTNER, USER_SUPER_ADMIN, USER_ADMIN)),
+                'langDefault'       => LANG_DEFAULT,
+            );
 
             // init display
             $fields = array(
-                'first_name'        => array('data' => 'First Name', 'icon' => 'true', 'element' => '', 'width' => '15%'),
-                'last_name'         => array('data' => 'Last Name', 'icon' => 'true', 'element' => '','width' => '15%'),
-                'email'             => array('data' => 'Email', 'icon' => 'true', 'element' => '','width' => '20%'),
-                'type'              => array('data' => 'Mod', 'icon' => 'true', 'element' => '', 'width' => '8%'),
-                'enable'            => array('data' => 'Active', 'icon' => 'false', 'element' => 'checkbox','width' => '8%'),
+                'name'          => array('data' => 'Language', 'icon' => 'true', 'element' => '', 'width' => '50%'),
+                'enable'        => array('data' => 'Active', 'icon' => 'false', 'element' => 'checkbox','width' => '25%'),
+                'status'        => array('data' => 'Live', 'icon' => 'false', 'element' => 'checkbox','width' => '25%'),
+                'code'        => array('data' => 'Code', 'icon' => 'false', 'element' => 'none','width' => '25%'),
             );
-            $filter = array(
-                'Name'    => array('data' => "test", 'content' => '',
-                    'label'=>'First Name','element' => 'text','class'=>'perc20'),
-                'Email'   => array('data' => USER_GUST, 'content' => $listGender,
-                    'label' => 'Email', 'element' => 'select', 'class' => 'perc20')
-            );
+
+
+            foreach ($request as $key => $value) {
+                if ( isset($filter[$key]) ) {
+                    $params[$filter[$key]['field']] = $value;
+                }
+
+            }
 
             // init values
-            $items = $this->load->model('Member', 'get_member_list');
-            $totalItems = $items->num_rows;
-            $list = $items->rows;
-
-            $listGender = array(
-                USER_GUST               =>  "-- Select --",
-                USER_SUPER_ADMIN        =>  "Super Admin",
-                USER_ADMIN              =>  "Admin",
-                USER_PARTNER            =>  "Partner",
-                USER_MEMBER             =>  "Member",
-            );
-
-
-//            $header['fields']['first_name']['iconSort'] = 'asc';
-
-            // analysis data
-            $paging['PageNum'] = isset($request['pageNum']) ? (int)$request['pageNum'] : 1;
-            foreach ($filter as $key => &$value) {
-                $value['data'] = isset($request[$key])?$request[$key]:(isset($session[$key])?$session[$key]:$value['data']);
-                switch ( $value['element'] ){
-                    case 'select':
-                        $value['content']   = __render($listGender);
-                        $value['data']      = __render($listGender[$value['data']], $value['data']);
-                        break;
-                }
-            }
-            foreach ($list as &$item) {
-                $item['type'] = $listGender[$item['type']];
-            }
+            $model = $this->load->eloquent("Language");
+            $list = $model::_filter($params);
 
 
             // merge data
             $header = array( 'columns' => $fields, 'rows' => array_keys($fields) );
             $filter = array( 'columns' => $filter, 'rows' => array_keys($filter) );
-            $paging['TotalItem'] = isset($totalItems) ? (int)$totalItems : 0;
-            $paging['TotalPage'] = ceil($paging['TotalItem']/ PAGER_LIMIT);
-            $paging['PageNext'] = $paging['PageNum'] + 1;
-            $paging['PagePrev'] = $paging['PageNum'] - 1;
 
-            // rebuild session
-//            $_SESSION['page_guide_'.$operatorId]['paging'] = $paging;
-
-            // render to js
             $data['test']               = $test;
             $data['header']             = $header;
             $data['filter']             = $filter;
             $data['list']               = $list;
-            $data['gender']             = $listGender;
             $data['paging']             = $paging;
+            $data['global']             = $global;
 
             return $data;
 
         } catch (Exception $ex){
             throw $ex;
         }
+    }
+
+    public function edit() {
+        $request = $this->request->request;
+        $loader = $this->load;
+
+        $pid = $request['pid'];
+        $modelMember =$loader->eloquent("Member");
+        if( $pid > 0) {
+            $items = $modelMember::find($pid);
+        } else {
+            $items = $modelMember::_make();
+        }
+
+        $listType = array(
+            USER_GUEST               =>  "-- Select --",
+            USER_SUPER_ADMIN        =>  "Super Admin",
+            USER_ADMIN              =>  "Admin",
+            USER_PARTNER            =>  "Partner",
+            USER_MEMBER             =>  "Member",
+        );
+
+        $statusList = array(
+            USER_STATUS_DEACTIVE    => "Inactive",
+            USER_STATUS_ACTIVE      => "Active",
+        );
+
+        $data['member']         = $items;
+        $data['typeList']       = __render($listType);
+        $data['statusList']     = __render($statusList);
+
+        return $data;
+    }
+
+    public function save() {
+        $loader = $this->load;
+        $post = $this->request->post['member'];
+
+        $data['first_name'] = $post['FirstName'];
+        $data['last_name'] = $post['LastName'];
+        $data['email'] = $post['Email'];
+        $data['type'] = $post['Type'];
+        $data['enable'] = $post['Active'];
+        $data['login_name'] = $post['UserName'];
+        if( !empty($post['Password']) ) {
+            $data['password'] = $post['Password'];
+        }
+
+        $model = $loader->eloquent("Member");
+        $data = $model::_save($data, $post['ID']);
+//        if ( $post['ID'] > 0) {
+//            $member = $post['ID'];
+//            $member = $model::_make();
+//        } else {
+//            unset($post['ID']);
+//            $member = $model::create($data);
+//        }
+//
+//        $member->save();
+        return $data;
+        //return $this->index();
+    }
+
+    public function delete() {
+        $request = $this->request->request;
+        $loader = $this->load;
+
+        $pid = $request['pid'];
+        $model = $loader->eloquent('Member');
+        $model::find($pid)->delete();
+
+        return $this->index();
     }
 }

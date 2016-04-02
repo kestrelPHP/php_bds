@@ -43,6 +43,9 @@ body, input, textarea, select {
     float: left;
 	padding: 1.5rem;
 }
+.rem {
+	font-size: 1rem;
+}
 select {
 	line-height: 1rem;
     background: url(../image/site/download.svg) no-repeat right;
@@ -78,25 +81,49 @@ select:hover {
 	border:1px solid black;
 	padding:10px;
 }
-
 .animate-if.ng-enter, .animate-if.ng-leave {
 	transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
 }
-
 .animate-if.ng-enter,
 .animate-if.ng-leave.ng-leave-active {
 	opacity:0;
 }
-
 .animate-if.ng-leave,
 .animate-if.ng-enter.ng-enter-active {
 	opacity:1;
+}
+.wauto{
+    width: auto !important;
 }
 .container-full {
 	width: 100%;
 	float: left;
 }
+.minicolors-theme-default.minicolors {
+    display: block;
+    position: relative;
+    padding-right: 1.875rem;
+}
+.minicolors-theme-default .minicolors-input {
+    padding-left: 0.3125rem;
+    height: 1.625rem;
+    display: block;
+    width: 100%;
+}
 
+.minicolors-theme-default .minicolors-swatch {
+    right: 0;
+    top: 0;
+    position: absolute;
+    left: auto;
+    height: 1.625rem;
+    width: 1.625rem;
+    border: none;
+}
+.minicolors-theme-default .minicolors-swatch .minicolors-swatch-color {
+    background-image: url('../image/trigger.png');
+    background-repeat: no-repeat;
+}
 .button {
     background-color: #5db6dd;
     border-color: #48add9;
@@ -143,6 +170,28 @@ select:hover {
 	padding-bottom: 0.5625rem;
 	padding-left: 0.875rem;
 	font-size: 0.875rem;
+}
+.button.info {
+    background-color: #e1e1e1;
+    border-color: #d4d4d4;
+    color: #333;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-image: -moz-linear-gradient(top,#fff,#e1e1e1);
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#e1e1e1));
+    background-image: -webkit-linear-gradient(top,#fff,#e1e1e1);
+    background-image: -o-linear-gradient(top,#fff,#e1e1e1);
+    background-image: linear-gradient(to bottom,#fff,#e1e1e1);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FFFFFFFF",endColorstr="#FFE1E1E1");
+    background-repeat: repeat-x;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border: 1px solid #ccc;
+}
+.button.info.tiny {
+    gpadding: 0.25rem 0.625rem;
+    height: 1.625rem;
 }
 .button.postfix {
 	height: 1.625rem;
@@ -197,10 +246,12 @@ form {
     width: 100%;
 }
 .modal-content .modal-header {
-    border: 0;
-    background-color: #76be43;
+    background-color: #f44d3c;
     padding: 0.9375rem 0.625rem;
     font-size: 14px;
+}
+.modal-content .modal-title {
+	color: rgba(255,255,255,0.9);
 }
 .modal-content .modal-body {
     background-color: #fff;
@@ -635,7 +686,7 @@ label.inline {
     box-shadow: 0 1px 1px #ababab;
     position: relative;
     z-index: 5;
-    background-color: #92cb69;
+    background-color: #2b2b2b;
 }
 #main-nav .top-bar-section ul li:hover {
     background-color: transparent;
@@ -683,7 +734,7 @@ label.inline {
 	border-bottom-right-radius: 3px;
 	border-bottom-left-radius: 3px;
 	height: 5.3125rem;
-	background-color: #76be43;
+	background-color: #f44d3c;
 }
 #main-nav .top-bar-section ul li>a .item-name {
     display: table-cell;
@@ -706,12 +757,12 @@ label.inline {
 .top-bar-section li a:not(.button) {
     padding: 0 15px;
     line-height: 45px;
-    background: #92cb69;
+    background: #2b2b2b;
 }
 .top-bar-section ul li>a {
     display: block;
     width: 100%;
-    color: rgba(0,0,0,0.3);
+    color: rgba(255,255,255,0.7);
     padding: 12px 0 12px 0;
     padding-left: 15px;
     font-size: 0.6875rem;

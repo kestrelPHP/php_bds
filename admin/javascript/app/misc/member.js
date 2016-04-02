@@ -1,6 +1,3 @@
-/**
- * Ng controller for Hotel Setting Listing Page
- */
 "use strict";
 
 app.controller('MemberController',
@@ -20,17 +17,12 @@ app.controller('MemberController',
             delete: '/misc/member@delete'
         };
 
-
-        var optionDateEx = {};
-        var filterParams = {};
-
         // init Tinymce
         $scope.tiny_options = $tinymceOptions.tiny;
         
         $scope.init = function (data) {
             $scope.link     = link;
             if ( typeof data != isInvalid ) {
-                // $scope.test     = data.test || {};
                 $scope.list     = data.list || {};
                 $scope.header   = data.header || {};
                 $scope.filter   = data.filter || {};
@@ -39,23 +31,7 @@ app.controller('MemberController',
             }
         };
 
-        $scope.sleep = function ($time) {
-            $timeout(function(){
-                $scope.loaded = true;
-            }, $time);
-        };
-
         $scope.fetchPage = function (pageNum) {
-            if (  $scope.paging == isDefined ) {
-                if (pageNum == 'n') pageNum = $scope.paging.PageNext;
-                else if (pageNum == 'p') pageNum = $scope.paging.PagePrev;
-
-                if ( (pageNum > 0 && pageNum <= $scope.paging.TotalPage) || ($scope.paging.TotalPage == 0) ) {
-                    jQuery.extend(filterParams, {pageNum: pageNum});
-                    $scope.fetched = false;
-                }
-            }
-
             var params = {};
             if ( $scope.searching ) {
                 if ( typeof $scope.filter.columns != isInvalid ) {
@@ -72,7 +48,17 @@ app.controller('MemberController',
                     }
                 }
             }
+            
+            if (  $scope.paging == isDefined ) {
+                if (pageNum == 'n') pageNum = $scope.paging.PageNext;
+                else if (pageNum == 'p') pageNum = $scope.paging.PagePrev;
 
+                if ( (pageNum > 0 && pageNum <= $scope.paging.TotalPage) || ($scope.paging.TotalPage == 0) ) {
+                    jQuery.extend(params, {pageNum: pageNum});
+                    $scope.fetched = false;
+                }
+            }
+            
             if ( !$scope.fetched ) {
                 return apiService.list($scope.link.list, params).then(function (response) {
                     $scope.init(response.data);
@@ -88,8 +74,6 @@ app.controller('MemberController',
         $scope.edit = function(id){
             $scope.start_edit = true;
             $scope.submitted = false;
-            // jQuery('#modalEdit').foundation('reveal', 'open');
-            //$compile(jQuery('#modalEdit').html())($scope);
 
             apiService.get($scope.link.edit, id).then(function (response) {
                 var data = response.data;
@@ -107,8 +91,6 @@ app.controller('MemberController',
                     $scope.member.LastName = member.last_name;
                     $scope.member.Email = member.email;
                     $scope.member.UserName = member.login_name;
-
-                    tinyMCE.execCommand("mceAddControl", false, 'correspondence_content');
                 }
             });
         };
@@ -119,16 +101,6 @@ app.controller('MemberController',
            }
            $scope.submitted = true;
 
-           // if(tls.checkPhoneSMS('phone') == 1){
-           //     $scope.phoneInvalid = true;
-           //     var $elm = jQuery('#phone');
-           //     $elm.focus();
-           //     tls.scrollElementToCenter($elm);
-           //     return;
-           // }else{
-           //     $scope.phoneInvalid = false;
-           // }
-
            if( !form.$invalid ){
                $scope.dataHasSaved();
                $scope.saving = true;
@@ -136,7 +108,6 @@ app.controller('MemberController',
                    $timeout(function () {
                        $scope.saving = false;
                        jQuery('#modelEdit').modal('toggle');
-                       //jQuery('#modalEdit').foundation('reveal', 'close');
                        $scope.init(response.data);
                    }, 1000);
                });
@@ -153,7 +124,6 @@ app.controller('MemberController',
 
             var messageDelete = jQuery('#messageDelete').text();
             jQuery('#modalDelContent').html(messageDelete + ' ' + name + '?');
-            //jQuery('#modalDel').foundation('reveal', 'open');
         };
         $scope.submitDel = function (id) {
             apiService.delete($scope.link.delete, id).then(function (response) {

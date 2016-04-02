@@ -14,39 +14,10 @@ if ( !path || path.indexOf('user/teams') == -1 ) {
 			window.history.pushState(null, '', hash);
 		}
 		else {
-			window.location.hash = '/dashboard';
+			window.location.hash = hash;
 		}
 	}
 }
-
-window.onbeforeunload = function (e) {
-	if ( jQuery('#data_not_save').val() == '1' ) {	
-		e = e || window.event;
-	
-		// For IE and Firefox prior to version 4
-		if ( e ) {
-		    e.returnValue = Drupal.t("You haven't saved your work. Do you want to leave without saving?");
-		}
-	
-		// For Safari
-		return Drupal.t("You haven't saved your work. Do you want to leave without saving?");
-	}
-};
-window.onunload = function() {
-	jQuery('#data_not_save').val(0);
-};
-
-window.onkeydown = function(evt) {
-	evt = evt || window.event;
-	if ( evt.keyCode == 116 ) {
-		//evt.preventDefault();
-		if ( jQuery('#data_not_save').val() == '1' ) {	
-			evt.preventDefault();
-			jQuery('#data_key_press').val(1);
-			jQuery('#data_not_save_alert').foundation('reveal', 'open');			
-		}
-	}
-};
 
 function changeActiveMenuItem() {
 	var url = window.location.hash;
@@ -54,7 +25,7 @@ function changeActiveMenuItem() {
 		url = '#/misc/new_accm';
 	}
 
-	url = url.replace('#/', '');
+	url = url.replace('#!/', '');
 	if ( url ) {
 		var params = url.split('/');
 		if ( params[0] != 'dashboard' ) {
@@ -63,29 +34,18 @@ function changeActiveMenuItem() {
 			if ( $li.length ) {
 				jQuery('#main-nav .top-bar-section ul li').removeClass('active');
 				$li.addClass('active');
-				jQuery('#sub-nav div.row').removeClass('active').addClass('hide');
+				jQuery('#sub-nav div.sub-row').removeClass('active').addClass('hide');
 				if ( $li.hasClass('has-child') ) {
-					//Remove this line
-					//jQuery('#sub-nav').removeClass('hide').css('position', 'static');
 					var child_name = $li.attr('ref');
 					jQuery('#sub-nav div.' + child_name).removeClass('hide').addClass('active');
 					
 					if ( params[1] ) {
 						jQuery('#sub-nav ul li.active').removeClass('active');
-						//var root_url = '/console/index/#/' + params[0];
-						var root_url = '/#/' + params[0];
+						var root_url = '#!/' + params[0];
 						root_url += '/' + params[1];
 
-                        if(root_url == '/#/front-desk/setup'){
-                            root_url = '/#/front-desk/setup/settings'
-                        }
-                        if(root_url == '/#/front-desk/booking-details'){
-                            root_url = '/#/front-desk/booking-details/0'
-                        }
-                        //console.log(root_url);
 						var $alink_child = jQuery('#sub-nav a[href="' + root_url + '"]');
-                        //console.log($alink_child.length);
-                        //console.log($alink_child.parent());
+
 						if ( $alink_child.length ) {
 							$alink_child.parent().addClass('active');
 						}
@@ -135,3 +95,32 @@ function groupTable($rows, startIndex, total){
         }
     }
 }
+
+window.onbeforeunload = function (e) {
+	if ( jQuery('#data_not_save').val() == '1' ) {
+		e = e || window.event;
+
+		// For IE and Firefox prior to version 4
+		if ( e ) {
+			e.returnValue = Drupal.t("You haven't saved your work. Do you want to leave without saving?");
+		}
+
+		// For Safari
+		return Drupal.t("You haven't saved your work. Do you want to leave without saving?");
+	}
+};
+window.onunload = function() {
+	jQuery('#data_not_save').val(0);
+};
+
+window.onkeydown = function(evt) {
+	evt = evt || window.event;
+	if ( evt.keyCode == 116 ) {
+		//evt.preventDefault();
+		if ( jQuery('#data_not_save').val() == '1' ) {
+			evt.preventDefault();
+			jQuery('#data_key_press').val(1);
+			jQuery('#data_not_save_alert').foundation('reveal', 'open');
+		}
+	}
+};

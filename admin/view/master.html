@@ -15,6 +15,7 @@
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,400i,300,700" rel="stylesheet" type="text/css"/>
 
     <link href="javascript/library/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="javascript/library/minicolors/jquery.minicolors.css" rel="stylesheet" type="text/css">
     <link href="static/css/flag-icon.css" rel="stylesheet" type="text/css"/>
     <link href="static/css/ui.css" rel="stylesheet" type="text/css"/>
     <link href="static/css/reset.css" rel="stylesheet" type="text/css"/>
@@ -33,6 +34,7 @@
     <script src='javascript/library/modernizr.custom-2.6.2.min.js'></script>
     <script src='javascript/library/tinymce/v3/tiny_mce_dev.js'></script>
     <script src='javascript/library/bootstrap/js/bootstrap.min.js'></script>
+    <script src='javascript/library/minicolors/jquery.minicolors.min.js'></script>
 
 </head>
 
@@ -65,15 +67,6 @@
                                         <span class="item-name">Website<br></span>
                                     </a>
                                 </li>
-                                <!--<li data-origin="console_setup" class="has-child mni-setup" ref="setup-subnav">-->
-                                    <!--<a href="#!/setup">-->
-                                        <!--<span class="menu-icon">-->
-                                            <!--<i class="fa fa-wrench fa-2x"></i>-->
-                                            <!--&lt;!&ndash;<span class="icon icon-menu-system"></span>&ndash;&gt;-->
-                                        <!--</span>-->
-                                        <!--<span class="item-name">Setup<br></span>-->
-                                    <!--</a>-->
-                                <!--</li>-->
                                 <li data-origin="console_social_media" class="mni-social-media">
                                     <a href="#!/social_media">
                                         <span class="menu-icon">
@@ -110,16 +103,6 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="sub-row setup-subnav hide">
-                        <ul class="inline-list">
-                            <li class="sub-menu-config">
-                                <a ng-reload-page="" href="#!/setup/config" target="">Configuration</a>
-                            </li>
-                            <li class="sub-menu-website">
-                                <a ng-reload-page="" href="#!/setup/website" target="">Website</a>
-                            </li>
-                        </ul>
-                    </div>
                     <div class="sub-row misc-subnav hide">
                         <ul class="inline-list">
                             <li class="sub-menu-member">
@@ -149,41 +132,19 @@
     </footer>
 </div>
 
-
-<!--SCRIPTS START-->
-<script type="text/javascript">
-//    tinymce.init({
-//        selector: '#myTextarea',
-//        theme: 'modern',
-//        width: 600,
-//        height: 300,
-//        plugins: [
-//            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
-//            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
-//            'save table contextmenu directionality emoticons template paste textcolor'
-//        ],
-//        content_css: 'css/content.css',
-//        toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons'
-//    });
-</script>
-<!--<script src="javascript/app/plugin.js"></script>-->
+<?php if ($inline_scripts) { print $inline_scripts; } ?>
+<!--<?php if ($scripts) { print $scripts; } ?>-->
 <script src="javascript/app/menu.js"></script>
 <script src="javascript/app/redirect.js"></script>
-
-
-
 
 <script src="javascript/app/app.js"></script>
 <script src="javascript/app/general.js"></script>
 <script src="javascript/app/directive.js"></script>
 <script src="javascript/app/dashboard.js"></script>
 
-<script src="javascript/app/website/page.js"></script>
 <script src="javascript/app/website/setting.js"></script>
 <script src="javascript/app/website/language.js"></script>
 
 <script src="javascript/app/misc/member.js"></script>
-<!--SCRIPTS END-->
 </body>
-
 </html>
